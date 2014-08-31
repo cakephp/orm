@@ -12,14 +12,25 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\ORM\Error;
+namespace Cake\ORM\Exception;
 
-use Cake\Error\NotFoundException;
+use RuntimeException;
 
 /**
  * Exception raised when a particular record was not found
  *
  */
-class RecordNotFoundException extends NotFoundException {
+class RecordNotFoundException extends RuntimeException {
+
+/**
+ * Constructor.
+ *
+ * @param string $message The error message
+ * @param int $code The code of the error, is also the HTTP status code for the error.
+ * @param \Exception $previous the previous exception.
+ */
+	public function __construct($message, $code = 404, $previous = null) {
+		parent::__construct($message, $code, $previous);
+	}
 
 }
