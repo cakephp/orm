@@ -333,7 +333,7 @@ class AssociationCollection implements IteratorAggregate
      *
      * @return array
      */
-    public function getAssociationsName()
+    public function getNames()
     {
         $return = [];
 
