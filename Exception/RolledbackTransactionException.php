@@ -1,7 +1,5 @@
 <?php
 /**
- * MissingTableClassException class
- *
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
@@ -9,7 +7,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @since         3.0.0
+ * @since         3.2.13
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\ORM\Exception;
@@ -17,10 +15,10 @@ namespace Cake\ORM\Exception;
 use Cake\Core\Exception\Exception;
 
 /**
- * Exception raised when a Table could not be found.
+ * Used when a transaction was rolled back from a callback event.
  */
-class MissingTableClassException extends Exception
+class RolledbackTransactionException extends Exception
 {
 
-    protected $_messageTemplate = 'Table class %s could not be found.';
+    protected $_messageTemplate = 'The afterSave event in "%s" is aborting the transaction before the save process is done.';
 }
