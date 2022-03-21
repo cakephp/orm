@@ -225,7 +225,7 @@ use Cake\Core\Configure;
 Configure::write('App.namespace', 'Acme');
 ```
 
-You can also set a longer namaspace up to the place where the `Model` folder is:
+You can also set a longer namespace up to the place where the `Model` folder is:
 
 ```php
 <?php
