@@ -3132,7 +3132,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array|null $context Either the validation context or null.
      * @return bool True if the value is unique, or false if a non-scalar, non-unique value was given.
      */
-    public function validateUnique(mixed $value, array $options, ?array $context = null): bool
+    public function validateUnique(mixed $value, array $options = [], ?array $context = null): bool
     {
         if ($context === null) {
             $context = $options;
