@@ -152,7 +152,7 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Get the names of all the associations in the collection.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function keys(): array
     {
