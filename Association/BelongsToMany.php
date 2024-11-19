@@ -166,7 +166,7 @@ class BelongsToMany extends Association
     /**
      * Sets the name of the field representing the foreign key to the target table.
      *
-     * @param list<string>|string $key the key to be used to link both tables together
+     * @param array<string>|string $key the key to be used to link both tables together
      * @return $this
      */
     public function setTargetForeignKey(array|string $key)

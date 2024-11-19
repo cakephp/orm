@@ -83,7 +83,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * Constructor.
      *
-     * @param list<string>|null $locations Locations where tables should be looked for.
+     * @param array<string>|null $locations Locations where tables should be looked for.
      *   If none provided, the default `Model\Table` under your app's namespace is used.
      */
     public function __construct(?array $locations = null, ?QueryFactory $queryFactory = null)
