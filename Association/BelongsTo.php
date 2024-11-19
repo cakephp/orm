@@ -40,7 +40,7 @@ class BelongsTo extends Association
     /**
      * Valid strategies for this type of association
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_validStrategies = [
         self::STRATEGY_JOIN,
@@ -147,7 +147,7 @@ class BelongsTo extends Association
             return false;
         }
 
-        /** @var list<string> $foreignKeys */
+        /** @var array<string> $foreignKeys */
         $foreignKeys = (array)$this->getForeignKey();
         $properties = array_combine(
             $foreignKeys,
