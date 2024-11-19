@@ -610,11 +610,11 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     /**
      * Lazy define and return the main table fields.
      *
-     * @return list<string>
+     * @return array<string>
      */
     protected function mainFields(): array
     {
-        /** @var list<string> $fields */
+        /** @var array<string> $fields */
         $fields = $this->getConfig('mainTableFields');
 
         if ($fields) {
@@ -631,7 +631,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     /**
      * Lazy define and return the translation table fields.
      *
-     * @return list<string>
+     * @return array<string>
      */
     protected function translatedFields(): array
     {
