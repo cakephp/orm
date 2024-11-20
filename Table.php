@@ -683,7 +683,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the display field.
      *
-     * @return list<string>|string
+     * @return list<string>|string|null
      */
     public function getDisplayField(): array|string|null
     {
@@ -3156,7 +3156,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         }
         $class = static::IS_UNIQUE_CLASS;
-        /** @var \Cake\ORM\Rule\IsUnique $rule */
         $rule = new $class($fields, $options);
 
         return $rule($entity, ['repository' => $this]);
