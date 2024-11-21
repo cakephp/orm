@@ -152,7 +152,7 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Get the names of all the associations in the collection.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function keys(): array
     {
@@ -162,7 +162,7 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Get an array of associations matching a specific type.
      *
-     * @param list<string>|string $class The type of associations you want.
+     * @param array<string>|string $class The type of associations you want.
      *   For example 'BelongsTo' or array like ['BelongsTo', 'HasOne']
      * @return array<\Cake\ORM\Association> An array of Association objects.
      * @since 3.5.3
