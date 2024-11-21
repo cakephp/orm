@@ -376,15 +376,10 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             return $this->_results;
         }
 
-        $results = null;
-        if ($this->_cache) {
-            $results = $this->_cache->fetch($this);
-        }
+        $results = $this->_cache?->fetch($this);
         if ($results === null) {
             $results = $this->_decorateResults($this->_execute());
-            if ($this->_cache) {
-                $this->_cache->store($this, $results);
-            }
+            $this->_cache?->store($this, $results);
         }
         $this->_results = $results;
 
@@ -771,7 +766,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * If a callback is passed, the returning array of the function will
      * be used as the list of fields.
      *
-     * By default this function will append any passed argument to the list of fields
+     * By default, this function will append any passed argument to the list of fields
      * to be selected, unless the second argument is set to true.
      *
      * ### Examples:
@@ -786,7 +781,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * })
      * ```
      *
-     * By default no fields are selected, if you have an instance of `Cake\ORM\Query` and try to append
+     * By default, no fields are selected, if you have an instance of `Cake\ORM\Query` and try to append
      * fields you should also call `Cake\ORM\Query::enableAutoFields()` to select the default fields
      * from the table.
      *
@@ -1748,7 +1743,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     /**
      * Sets whether the ORM should automatically append fields.
      *
-     * By default calling select() will disable auto-fields. You can re-enable
+     * By default, calling select() will disable auto-fields. You can re-enable
      * auto-fields with this method.
      *
      * @param bool $value Set true to enable, false to disable.
@@ -1776,7 +1771,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     /**
      * Gets whether the ORM should automatically append fields.
      *
-     * By default calling select() will disable auto-fields. You can re-enable
+     * By default, calling select() will disable auto-fields. You can re-enable
      * auto-fields with enableAutoFields().
      *
      * @return bool|null The current value. Returns null if neither enabled or disabled yet.
