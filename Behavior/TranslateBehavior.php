@@ -182,7 +182,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     {
         $config = array_diff_key(
             $this->_config,
-            ['implementedFinders', 'implementedMethods', 'strategyClass']
+            ['implementedFinders', 'implementedMethods', 'strategyClass'],
         );
         /** @var class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface> $className */
         $className = $this->getConfig('strategyClass', static::$defaultStrategyClass);
@@ -256,7 +256,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * of translations by setting `'translations' => false` in the options
      * provided to `Table::newEntity()` or `Table::patchEntity()`.
      *
-     * @param \Cake\ORM\Marshaller $marshaller The marhshaller of the table the behavior is attached to.
+     * @param \Cake\ORM\Marshaller $marshaller The marshaller of the table the behavior is attached to.
      * @param array $map The property map being built.
      * @param array<string, mixed> $options The options array used in the marshalling call.
      * @return array A map of `[property => callable]` of additional properties to marshal.
