@@ -88,9 +88,9 @@ class TimestampBehavior extends Behavior
      *
      * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event Event instance.
      * @param \Cake\Datasource\EntityInterface $entity Entity instance.
-     * @throws \UnexpectedValueException if a field's when value is misdefined
+     * @throws \UnexpectedValueException If a field's value is misdefined.
+     * @throws \UnexpectedValueException When the value for an event is not 'always', 'new' or 'existing'.
      * @return void
-     * @throws \UnexpectedValueException When the value for an event is not 'always', 'new' or 'existing'
      */
     public function handleEvent(EventInterface $event, EntityInterface $entity): void
     {
