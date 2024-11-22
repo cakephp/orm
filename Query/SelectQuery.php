@@ -598,7 +598,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             $table = $this->getRepository();
             throw new RecordNotFoundException(sprintf(
                 'Record not found in table `%s`.',
-                $table->getTable()
+                $table->getTable(),
             ));
         }
 
@@ -1016,7 +1016,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         $this->_addAssociationsToTypeMap(
             $this->getRepository(),
             $this->getTypeMap(),
-            $loader->getContain()
+            $loader->getContain(),
         );
 
         return $this;
