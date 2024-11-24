@@ -48,7 +48,7 @@ class RulesChecker extends BaseRulesChecker
      *
      * - `allowMultipleNulls` Allows any field to have multiple null values. Defaults to false.
      *
-     * @param list<string> $fields The list of fields to check for uniqueness.
+     * @param array<string> $fields The list of fields to check for uniqueness.
      * @param array<string, mixed>|string|null $message The error message to show in case the rule does not pass. Can
      *   also be an array of options. When an array, the 'message' key can be used to provide a message.
      * @return \Cake\Datasource\RuleInvoker
@@ -90,7 +90,7 @@ class RulesChecker extends BaseRulesChecker
      * 'message' sets a custom error message.
      * Set 'allowNullableNulls' to true to accept composite foreign keys where one or more nullable columns are null.
      *
-     * @param list<string>|string $field The field or list of fields to check for existence by
+     * @param array<string>|string $field The field or list of fields to check for existence by
      * primary key lookup in the other table.
      * @param \Cake\ORM\Table|\Cake\ORM\Association|string $table The table name where the fields existence will be checked.
      * @param array<string, mixed>|string|null $message The error message to show in case the rule does not pass. Can
@@ -151,7 +151,7 @@ class RulesChecker extends BaseRulesChecker
             $field,
             $message,
             LinkConstraint::STATUS_LINKED,
-            '_isLinkedTo'
+            '_isLinkedTo',
         );
     }
 
@@ -184,7 +184,7 @@ class RulesChecker extends BaseRulesChecker
             $field,
             $message,
             LinkConstraint::STATUS_NOT_LINKED,
-            '_isNotLinkedTo'
+            '_isNotLinkedTo',
         );
     }
 
@@ -234,19 +234,19 @@ class RulesChecker extends BaseRulesChecker
                 $message = __d(
                     'cake',
                     'Cannot modify row: a constraint for the `{0}` association fails.',
-                    $associationAlias
+                    $associationAlias,
                 );
             } else {
                 $message = sprintf(
                     'Cannot modify row: a constraint for the `%s` association fails.',
-                    $associationAlias
+                    $associationAlias,
                 );
             }
         }
 
         $rule = new LinkConstraint(
             $association,
-            $linkStatus
+            $linkStatus,
         );
 
         return $this->_addError($rule, $ruleName, compact('errorField', 'message'));
@@ -280,7 +280,7 @@ class RulesChecker extends BaseRulesChecker
         return $this->_addError(
             new ValidCount($field),
             '_validCount',
-            compact('count', 'operator', 'errorField', 'message')
+            compact('count', 'operator', 'errorField', 'message'),
         );
     }
 }
