@@ -247,7 +247,7 @@ class CounterCacheBehavior extends Behavior
         string $field,
         array $config,
         int $limit = 100,
-        ?int $page = null
+        ?int $page = null,
     ): void {
         $primaryKeys = (array)$assoc->getBindingKey();
         /** @var array<string> $foreignKeys */
@@ -317,7 +317,7 @@ class CounterCacheBehavior extends Behavior
         EventInterface $event,
         EntityInterface $entity,
         Association $assoc,
-        array $settings
+        array $settings,
     ): void {
         /** @var array<string> $foreignKeys */
         $foreignKeys = (array)$assoc->getForeignKey();
