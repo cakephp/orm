@@ -23,14 +23,14 @@
         "source": "https://github.com/cakephp/orm"
     },
     "require": {
-        "php": ">=8.1",
-        "cakephp/collection": "^5.1",
-        "cakephp/core": "^5.1",
-        "cakephp/datasource": "^5.1",
-        "cakephp/database": "^5.1",
-        "cakephp/event": "^5.1",
-        "cakephp/utility": "^5.1",
-        "cakephp/validation": "^5.1"
+        "php": ">=8.4",
+        "cakephp/collection": "6.x-dev",
+        "cakephp/core": "6.x-dev",
+        "cakephp/datasource": "6.x-dev",
+        "cakephp/database": "6.x-dev",
+        "cakephp/event": "6.x-dev",
+        "cakephp/utility": "6.x-dev",
+        "cakephp/validation": "6.x-dev"
     },
     "suggest": {
         "cakephp/cache": "If you decide to use Query caching.",
@@ -45,7 +45,9 @@
         ]
     },
     "require-dev": {
-        "cakephp/cache": "^5.1",
-        "cakephp/i18n": "^5.1"
-    }
+        "cakephp/cache": "6.x-dev",
+        "cakephp/i18n": "6.x-dev"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
