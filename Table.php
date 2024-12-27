@@ -57,8 +57,6 @@ use Exception;
 use InvalidArgumentException;
 use Psr\SimpleCache\CacheInterface;
 use ReflectionFunction;
-use ReflectionNamedType;
-use function Cake\Core\deprecationWarning;
 use function Cake\Core\namespaceSplit;
 
 /**
@@ -1507,7 +1505,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      *
      * @param mixed $primaryKey primary key value to find
-     * @param array|string $finder The finder to use. Passing an options array is deprecated.
+     * @param string $finder The finder to use.
      * @param \Psr\SimpleCache\CacheInterface|string|null $cache The cache config to use.
      *   Defaults to `null`, i.e. no caching.
      * @param \Closure|string|null $cacheKey The cache key to use. If not provided
@@ -1522,7 +1520,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function get(
         mixed $primaryKey,
-        array|string $finder = 'all',
+        string $finder = 'all',
         CacheInterface|string|null $cache = null,
         Closure|string|null $cacheKey = null,
         mixed ...$args,
@@ -1555,24 +1553,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ));
         }
         $conditions = array_combine($key, $primaryKey);
-
-        if (is_array($finder)) {
-            deprecationWarning(
-                '5.0.0',
-                'Calling Table::get() with options array is deprecated.'
-                    . ' Use named arguments instead.',
-            );
-
-            $args += $finder;
-            $finder = $args['finder'] ?? 'all';
-            if (isset($args['cache'])) {
-                $cache = $args['cache'];
-            }
-            if (isset($args['key'])) {
-                $cacheKey = $args['key'];
-            }
-            unset($args['key'], $args['cache'], $args['finder']);
-        }
 
         $query = $this->find($finder, ...$args)->where($conditions);
 
@@ -2672,56 +2652,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $reflected = new ReflectionFunction($callable);
         $params = $reflected->getParameters();
-        $secondParam = $params[1] ?? null;
-
-        $secondParamType = $secondParam?->getType();
-        $secondParamTypeName = $secondParamType instanceof ReflectionNamedType ? $secondParamType->getName() : null;
-
-        $secondParamIsOptions = (
-            count($params) === 2 &&
-            $secondParam?->name === 'options' &&
-            !$secondParam->isVariadic() &&
-            ($secondParamType === null || $secondParamTypeName === 'array')
-        );
-
-        if (($args === [] || isset($args[0])) && $secondParamIsOptions) {
-            // Backwards compatibility of 4.x style finders
-            // with signature `findFoo(SelectQuery $query, array $options)`
-            // called as `find('foo')` or `find('foo', [..])`
-            if (isset($args[0])) {
-                deprecationWarning(
-                    '5.0.0',
-                    'Calling finders with options arrays is deprecated.'
-                    . ' Update your finder methods to used named arguments instead.',
-                );
-                $args = $args[0];
-            }
-            $query->applyOptions($args);
-
-            return $callable($query, $query->getOptions());
-        }
-
-        // Backwards compatibility for 4.x style finders with signatures like
-        // `findFoo(SelectQuery $query, array $options)` called as
-        // `find('foo', key: $value)`.
-        if (!isset($args[0]) && $secondParamIsOptions) {
-            $query->applyOptions($args);
-
-            return $callable($query, $query->getOptions());
-        }
-
-        // Backwards compatibility for core finders like `findList()` called in 4.x
-        // style with an array `find('list', ['valueField' => 'foo'])` instead of
-        // `find('list', valueField: 'foo')`
-        if (isset($args[0]) && is_array($args[0]) && $secondParamTypeName !== 'array') {
-            deprecationWarning(
-                '5.0.0',
-                "Calling `{$reflected->getName()}` finder with options array is deprecated."
-                 . ' Use named arguments instead.',
-            );
-
-            $args = $args[0];
-        }
 
         if ($args) {
             $query->applyOptions($args);
