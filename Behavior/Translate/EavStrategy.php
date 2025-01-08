@@ -22,7 +22,6 @@ use Cake\Collection\CollectionInterface;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
-use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
@@ -314,9 +313,10 @@ class EavStrategy implements TranslateStrategyInterface
             $modified[$field] = $translation;
         }
 
+        $entityClass = $this->translationTable->getEntityClass();
         $new = array_diff_key($values, $modified);
         foreach ($new as $field => $content) {
-            $new[$field] = new Entity(compact('locale', 'field', 'content', 'model'), [
+            $new[$field] = new $entityClass(compact('locale', 'field', 'content', 'model'), [
                 'useSetters' => false,
                 'markNew' => true,
             ]);
@@ -424,9 +424,9 @@ class EavStrategy implements TranslateStrategyInterface
             }
             $grouped = new Collection($translations);
 
+            $entityClass = $this->table->getEntityClass();
             $result = [];
             foreach ($grouped->combine('field', 'content', 'locale') as $locale => $keys) {
-                $entityClass = $this->table->getEntityClass();
                 $translation = new $entityClass($keys + ['locale' => $locale], [
                     'markNew' => false,
                     'useSetters' => false,
@@ -466,6 +466,7 @@ class EavStrategy implements TranslateStrategyInterface
         $key = $entity->get((string)current($primaryKey));
         $find = [];
         $contents = [];
+        $entityClass = $this->translationTable->getEntityClass();
 
         foreach ($translations as $lang => $translation) {
             foreach ($fields as $field) {
@@ -473,7 +474,7 @@ class EavStrategy implements TranslateStrategyInterface
                     continue;
                 }
                 $find[] = ['locale' => $lang, 'field' => $field, 'foreign_key IS' => $key];
-                $contents[] = new Entity(['content' => $translation->get($field)], [
+                $contents[] = new $entityClass(['content' => $translation->get($field)], [
                     'useSetters' => false,
                 ]);
             }

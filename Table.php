@@ -3137,7 +3137,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($context === null) {
             $context = $options;
         }
-        $entity = new Entity(
+        $entity = new ($this->getEntityClass())(
             $context['data'],
             [
                 'useSetters' => false,
