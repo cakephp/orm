@@ -301,6 +301,29 @@ class BelongsToMany extends Association
     }
 
     /**
+     * Set the junction property name.
+     *
+     * @param string $junctionProperty Property name.
+     * @return $this
+     */
+    public function setJunctionProperty(string $junctionProperty)
+    {
+        $this->_junctionProperty = $junctionProperty;
+
+        return $this;
+    }
+
+    /**
+     * Get the junction property naeme.
+     *
+     * @return string
+     */
+    public function getJunctionProperty(): string
+    {
+        return $this->_junctionProperty;
+    }
+
+    /**
      * Generate reciprocal associations as necessary.
      *
      * Generates the following associations:
@@ -463,7 +486,7 @@ class BelongsToMany extends Association
 
         $includeFields = $options['includeFields'] ?? null;
 
-        // Attach the junction table as well we need it to populate _joinData.
+        // Attach the junction table as well we need it to populate junction property (_joinData).
         $assoc = $this->getTarget()->getAssociation($junction->getAlias());
         $newOptions = array_intersect_key($options, ['joinType' => 1, 'fields' => 1]);
         $newOptions += [
@@ -1511,6 +1534,11 @@ class BelongsToMany extends Association
         }
         if (isset($options['sort'])) {
             $this->setSort($options['sort']);
+        }
+        if (isset($options['junctionProperty'])) {
+            assert(is_string($options['junctionProperty']), '`junctionProperty` must be a string');
+
+            $this->_junctionProperty = $options['junctionProperty'];
         }
     }
 }
