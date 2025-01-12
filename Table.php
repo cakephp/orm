@@ -310,13 +310,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 $this->{'set' . $cfg}($config[$cfg]);
             }
         }
-        if (!empty($config['validator'])) {
-            if (!is_array($config['validator'])) {
-                $this->setValidator(static::DEFAULT_VALIDATOR, $config['validator']);
-            } else {
+        if (isset($config['validator'])) {
+            if (is_array($config['validator'])) {
                 foreach ($config['validator'] as $name => $validator) {
                     $this->setValidator($name, $validator);
                 }
+            } else {
+                $this->setValidator(static::DEFAULT_VALIDATOR, $config['validator']);
             }
         }
         $this->_eventManager = $config['eventManager'] ?? new EventManager();
