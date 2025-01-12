@@ -297,38 +297,18 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function __construct(array $config = [])
     {
-        if (!empty($config['registryAlias'])) {
-            $this->setRegistryAlias($config['registryAlias']);
-        }
-        if (!empty($config['table'])) {
-            $this->setTable($config['table']);
-        }
-        if (!empty($config['alias'])) {
-            $this->setAlias($config['alias']);
-        }
-        if (!empty($config['connection'])) {
-            $this->setConnection($config['connection']);
-        }
-        if (!empty($config['queryFactory'])) {
-            $this->queryFactory = $config['queryFactory'];
-        }
-        if (!empty($config['schema'])) {
-            $this->setSchema($config['schema']);
-        }
-        if (!empty($config['entityClass'])) {
-            $this->setEntityClass($config['entityClass']);
-        }
-        $eventManager = null;
-        $behaviors = null;
-        $associations = null;
-        if (!empty($config['eventManager'])) {
-            $eventManager = $config['eventManager'];
-        }
-        if (!empty($config['behaviors'])) {
-            $behaviors = $config['behaviors'];
-        }
-        if (!empty($config['associations'])) {
-            $associations = $config['associations'];
+        $methodConfigs = [
+            'registryAlias',
+            'table',
+            'alias',
+            'connection',
+            'schema',
+            'entityClass',
+        ];
+        foreach ($methodConfigs as $cfg) {
+            if (isset($config[$cfg])) {
+                $this->{'set' . $cfg}($config[$cfg]);
+            }
         }
         if (!empty($config['validator'])) {
             if (!is_array($config['validator'])) {
@@ -339,13 +319,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 }
             }
         }
-        $this->_eventManager = $eventManager ?: new EventManager();
-        /** @var \Cake\ORM\BehaviorRegistry $behaviors */
-        $this->_behaviors = $behaviors ?: new BehaviorRegistry();
+        $this->_eventManager = $config['eventManager'] ?? new EventManager();
+        $this->_behaviors = $config['behaviors'] ?? new BehaviorRegistry();
         $this->_behaviors->setTable($this);
-        $this->_associations = $associations ?: new AssociationCollection();
-        /** @psalm-suppress TypeDoesNotContainType */
-        $this->queryFactory ??= new QueryFactory();
+        $this->_associations = $config['associations'] ?? new AssociationCollection();
+        $this->queryFactory = $config['queryFactory'] ?? new QueryFactory();
 
         $this->initialize($config);
 
