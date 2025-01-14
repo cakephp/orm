@@ -230,9 +230,7 @@ abstract class Association
             }
         }
 
-        if (empty($this->_className)) {
-            $this->_className = $alias;
-        }
+        $this->_className ??= $alias;
 
         [, $name] = pluginSplit($alias);
         $this->_name = $name;
@@ -710,7 +708,7 @@ abstract class Association
             $options['includeFields'] = false;
         }
 
-        if (!empty($options['foreignKey'])) {
+        if ($options['foreignKey']) {
             $joinCondition = $this->_joinCondition($options);
             if ($joinCondition) {
                 $options['conditions'][] = $joinCondition;
