@@ -421,7 +421,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         if ($translation) {
             $translation->set($values);
         } else {
-            $translation = $this->translationTable->newEntity(
+            $translation = new ($this->translationTable->getEntityClass())(
                 $where + $values,
                 [
                     'useSetters' => false,
