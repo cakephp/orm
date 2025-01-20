@@ -57,6 +57,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             'setLocale' => 'setLocale',
             'getLocale' => 'getLocale',
             'translationField' => 'translationField',
+            'getStrategy' => 'getStrategy',
         ],
         'fields' => [],
         'defaultLocale' => null,
