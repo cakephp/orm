@@ -35,6 +35,7 @@ use Cake\ORM\Table;
 use Closure;
 use InvalidArgumentException;
 use JsonSerializable;
+use PDO;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -1435,26 +1436,22 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
 
         $count = ['count' => $query->func()->count('*')];
 
-        if (!$complex) {
+        if ($complex) {
+            $statement = $this->getConnection()->selectQuery()
+                ->select($count)
+                ->from(['count_source' => $query])
+                ->execute();
+        } else {
             $query->getEagerLoader()->disableAutoFields();
             $statement = $query
                 ->select($count, true)
                 ->disableAutoFields()
                 ->execute();
-        } else {
-            $statement = $this->getConnection()->selectQuery()
-                ->select($count)
-                ->from(['count_source' => $query])
-                ->execute();
         }
 
-        $result = $statement->fetch('assoc');
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
 
-        if ($result === false) {
-            return 0;
-        }
-
-        return (int)$result['count'];
+        return $result === false ? 0 : (int)$result['count'];
     }
 
     /**
