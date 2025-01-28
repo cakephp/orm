@@ -24,17 +24,17 @@
     },
     "require": {
         "php": ">=8.4",
-        "cakephp/collection": "^6.0",
-        "cakephp/core": "^6.0",
-        "cakephp/datasource": "^6.0",
-        "cakephp/database": "^6.0",
-        "cakephp/event": "^6.0",
-        "cakephp/utility": "^6.0",
-        "cakephp/validation": "^6.0"
+        "cakephp/collection": "6.0.*@dev",
+        "cakephp/core": "6.0.*@dev",
+        "cakephp/datasource": "6.0.*@dev",
+        "cakephp/database": "6.0.*@dev",
+        "cakephp/event": "6.0.*@dev",
+        "cakephp/utility": "6.0.*@dev",
+        "cakephp/validation": "6.0.*@dev"
     },
     "require-dev": {
-        "cakephp/cache": "^6.0",
-        "cakephp/i18n": "^6.0"
+        "cakephp/cache": "6.0.*@dev",
+        "cakephp/i18n": "6.0.*@dev"
     },
     "autoload": {
         "psr-4": {
@@ -48,6 +48,10 @@
         "cakephp/cache": "If you decide to use Query caching.",
         "cakephp/i18n": "If you are using Translate/TimestampBehavior or Chronos types."
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-5.next": "6.0.x-dev"
+        }
+    }
 }
