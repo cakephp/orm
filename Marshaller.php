@@ -120,7 +120,12 @@ class Marshaller
                 ): array|EntityInterface|null {
                     $options = $nested + ['associated' => [], 'association' => $assoc];
 
-                    return $this->_mergeAssociation($entity->get($assoc->getProperty()), $assoc, $value, $options);
+                    return $this->_mergeAssociation(
+                        $this->fieldValue($entity, $assoc->getProperty()),
+                        $assoc,
+                        $value,
+                        $options
+                    );
                 };
             } else {
                 $callback = function ($value, $entity) use ($assoc, $nested): array|EntityInterface|null {
@@ -589,7 +594,7 @@ class Marshaller
                 }
                 continue;
             }
-            $original = $entity->get($key);
+            $original = $this->fieldValue($entity, $key);
 
             if (isset($propertyMap[$key])) {
                 $value = $propertyMap[$key]($value, $entity);
@@ -853,7 +858,7 @@ class Marshaller
             // Mark joinData as accessible so we can marshal it properly.
             $entity->setAccess($junctionProperty, true);
 
-            $joinData = $entity->get($junctionProperty);
+            $joinData = $this->fieldValue($entity, $junctionProperty);
             if ($joinData instanceof EntityInterface) {
                 $extra[spl_object_hash($entity)] = $joinData;
             }
@@ -872,7 +877,7 @@ class Marshaller
         $records = $this->mergeMany($original, $value, $options);
         foreach ($records as $record) {
             $hash = spl_object_hash($record);
-            $value = $record->get($junctionProperty);
+            $value = $this->fieldValue($record, $junctionProperty);
 
             // Already an entity, no further marshalling required.
             if ($value instanceof EntityInterface) {
@@ -910,5 +915,20 @@ class Marshaller
         $data = new ArrayObject($data);
         $options = new ArrayObject($options);
         $this->_table->dispatchEvent('Model.afterMarshal', compact('entity', 'data', 'options'));
+    }
+
+    /**
+     * Get the value of a field from an entity.
+     *
+     * It checks whether the field exists in the entity before getting the value
+     * to avoid MissingPropertyException if `requireFieldPresence` is enabled.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity The entity to extract the field from.
+     * @param string $field The field to extract.
+     * @return mixed
+     */
+    protected function fieldValue(EntityInterface $entity, string $field): mixed
+    {
+        return $entity->has($field) ? $entity->get($field) : null;
     }
 }
