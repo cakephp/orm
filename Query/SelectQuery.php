@@ -384,6 +384,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         }
         $this->_results = $results;
 
+        /** @phpstan-ignore-next-line */
         return $this->_results;
     }
 
