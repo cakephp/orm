@@ -356,7 +356,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      */
     public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
-        $locale = $entity->get('_locale') ?: $this->getLocale();
+        $locale = $entity->has('_locale') ? $entity->get('_locale') : $this->getLocale();
         $newOptions = [$this->translationTable->getAlias() => ['validate' => false]];
         $options['associated'] = $newOptions + $options['associated'];
 
@@ -368,7 +368,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         }
 
         $this->bundleTranslatedFields($entity);
-        $bundled = $entity->get('_i18n') ?: [];
+        $bundled = $entity->has('_i18n') ? $entity->get('_i18n') : [];
         $noBundled = count($bundled) === 0;
 
         // No additional translation records need to be saved,
@@ -556,7 +556,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
             if (!($row instanceof EntityInterface)) {
                 return $row;
             }
-            $translations = (array)$row->get('_i18n');
+            $translations = $row->has('_i18n') ? $row->get('_i18n') : null;
             if (!$translations && $row->get('_translations')) {
                 return $row;
             }
@@ -588,21 +588,27 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     protected function bundleTranslatedFields(EntityInterface $entity): void
     {
         /** @var array<string, \Cake\ORM\Entity> $translations */
-        $translations = (array)$entity->get('_translations');
+        $translations = $entity->has('_translations') ? $entity->get('_translations') : null;
 
         if (!$translations && !$entity->isDirty('_translations')) {
             return;
         }
 
-        $primaryKey = (array)$this->table->getPrimaryKey();
-        $key = $entity->get((string)current($primaryKey));
+        if ($entity->isNew()) {
+            $key = null;
+        } else {
+            $primaryKey = (array)$this->table->getPrimaryKey();
+            $key = $entity->get((string)current($primaryKey));
+        }
 
         foreach ($translations as $lang => $translation) {
-            if (!$translation->id) {
+            if ($translation->isNew()) {
                 $update = [
-                    'id' => $key,
                     'locale' => $lang,
                 ];
+                if ($key !== null) {
+                    $update['id'] = $key;
+                }
                 $translation->set($update, ['guard' => false]);
             }
         }
