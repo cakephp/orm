@@ -45,7 +45,7 @@ interface LocatorInterface extends BaseLocatorInterface
      * @throws \RuntimeException When you attempt to configure an existing
      *   table instance.
      */
-    public function setConfig(array|string $alias, ?array $options = null);
+    public function setConfig(array|string $alias, ?array $options = null): static;
 
     /**
      * Get a table instance from the registry.

@@ -259,7 +259,7 @@ abstract class Association
      * @param bool $cascadeCallbacks cascade callbacks switch value
      * @return $this
      */
-    public function setCascadeCallbacks(bool $cascadeCallbacks)
+    public function setCascadeCallbacks(bool $cascadeCallbacks): static
     {
         $this->_cascadeCallbacks = $cascadeCallbacks;
 
@@ -284,7 +284,7 @@ abstract class Association
      * @throws \InvalidArgumentException In case the class name is set after the target table has been
      *  resolved, and it doesn't match the target table's class name.
      */
-    public function setClassName(string $className)
+    public function setClassName(string $className): static
     {
         if (
             isset($this->_targetTable) &&
@@ -318,7 +318,7 @@ abstract class Association
      * @param \Cake\ORM\Table $table the instance to be assigned as source side
      * @return $this
      */
-    public function setSource(Table $table)
+    public function setSource(Table $table): static
     {
         $this->_sourceTable = $table;
 
@@ -341,7 +341,7 @@ abstract class Association
      * @param \Cake\ORM\Table $table the instance to be assigned as target side
      * @return $this
      */
-    public function setTarget(Table $table)
+    public function setTarget(Table $table): static
     {
         $this->_targetTable = $table;
 
@@ -403,7 +403,7 @@ abstract class Association
      * @see \Cake\Database\Query::where() for examples on the format of the array
      * @return $this
      */
-    public function setConditions(Closure|array $conditions)
+    public function setConditions(Closure|array $conditions): static
     {
         $this->_conditions = $conditions;
 
@@ -429,7 +429,7 @@ abstract class Association
      * @param array<string>|string $key the table field or fields to be used to link both tables together
      * @return $this
      */
-    public function setBindingKey(array|string $key)
+    public function setBindingKey(array|string $key): static
     {
         $this->_bindingKey = $key;
 
@@ -469,7 +469,7 @@ abstract class Association
      * @param array<string>|string $key the key or keys to be used to link both tables together
      * @return $this
      */
-    public function setForeignKey(array|string $key)
+    public function setForeignKey(array|string $key): static
     {
         $this->_foreignKey = $key;
 
@@ -487,7 +487,7 @@ abstract class Association
      * @param bool $dependent Set the dependent mode. Use null to read the current state.
      * @return $this
      */
-    public function setDependent(bool $dependent)
+    public function setDependent(bool $dependent): static
     {
         $this->_dependent = $dependent;
 
@@ -526,7 +526,7 @@ abstract class Association
      * @param string $type the join type to be used (e.g. INNER)
      * @return $this
      */
-    public function setJoinType(string $type)
+    public function setJoinType(string $type): static
     {
         $this->_joinType = $type;
 
@@ -550,7 +550,7 @@ abstract class Association
      * @param string $name The name of the association property. Use null to read the current value.
      * @return $this
      */
-    public function setProperty(string $name)
+    public function setProperty(string $name): static
     {
         $this->_propertyName = $name;
 
@@ -601,7 +601,7 @@ abstract class Association
      * @return $this
      * @throws \InvalidArgumentException When an invalid strategy is provided.
      */
-    public function setStrategy(string $name)
+    public function setStrategy(string $name): static
     {
         if (!in_array($name, $this->_validStrategies, true)) {
             throw new InvalidArgumentException(sprintf(
@@ -643,7 +643,7 @@ abstract class Association
      * @param array|string $finder the finder name to use or array of finder name and option.
      * @return $this
      */
-    public function setFinder(array|string $finder)
+    public function setFinder(array|string $finder): static
     {
         $this->_finder = $finder;
 

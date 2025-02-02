@@ -45,7 +45,7 @@ trait LocatorAwareTrait
      * @param \Cake\ORM\Locator\LocatorInterface $tableLocator LocatorInterface instance.
      * @return $this
      */
-    public function setTableLocator(LocatorInterface $tableLocator)
+    public function setTableLocator(LocatorInterface $tableLocator): static
     {
         $this->_tableLocator = $tableLocator;
 
