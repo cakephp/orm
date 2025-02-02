@@ -74,7 +74,7 @@ trait TranslateStrategyTrait
      *   the behavior falls back to using the globally configured locale.
      * @return $this
      */
-    public function setLocale(?string $locale)
+    public function setLocale(?string $locale): static
     {
         $this->locale = $locale;
 

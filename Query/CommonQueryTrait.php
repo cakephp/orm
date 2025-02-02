@@ -42,7 +42,7 @@ trait CommonQueryTrait
      * @param \Cake\ORM\Table $table The table to pull types from
      * @return $this
      */
-    public function addDefaultTypes(Table $table)
+    public function addDefaultTypes(Table $table): static
     {
         $alias = $table->getAlias();
         $map = $table->getSchema()->typeMap();
@@ -62,7 +62,7 @@ trait CommonQueryTrait
      * @param \Cake\Datasource\RepositoryInterface $repository The default table object to use
      * @return $this
      */
-    public function setRepository(RepositoryInterface $repository)
+    public function setRepository(RepositoryInterface $repository): static
     {
         assert(
             $repository instanceof Table,

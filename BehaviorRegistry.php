@@ -219,7 +219,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * @param string $name The name of the object to remove from the registry.
      * @return $this
      */
-    public function unload(string $name)
+    public function unload(string $name): static
     {
         $instance = $this->get($name);
         $result = parent::unload($name);
