@@ -240,7 +240,7 @@ class EavStrategy implements TranslateStrategyInterface
      */
     public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
-        $locale = $entity->get('_locale') ?: $this->getLocale();
+        $locale = $entity->has('_locale') ? $entity->get('_locale') : $this->getLocale();
         $newOptions = [$this->translationTable->getAlias() => ['validate' => false]];
         $options['associated'] = $newOptions + $options['associated'];
 
@@ -252,7 +252,7 @@ class EavStrategy implements TranslateStrategyInterface
         }
 
         $this->bundleTranslatedFields($entity);
-        $bundled = $entity->get('_i18n') ?: [];
+        $bundled = $entity->has('_i18n') ? $entity->get('_i18n') : [];
         $noBundled = count($bundled) === 0;
 
         // No additional translation records need to be saved,
@@ -418,7 +418,7 @@ class EavStrategy implements TranslateStrategyInterface
             if (!$row instanceof EntityInterface) {
                 return $row;
             }
-            $translations = (array)$row->get('_i18n');
+            $translations = $row->has('_i18n') ? $row->get('_i18n') : null;
             if (!$translations && $row->get('_translations')) {
                 return $row;
             }
@@ -455,15 +455,19 @@ class EavStrategy implements TranslateStrategyInterface
     protected function bundleTranslatedFields(EntityInterface $entity): void
     {
         /** @var array<string, \Cake\Datasource\EntityInterface> $translations */
-        $translations = (array)$entity->get('_translations');
+        $translations = $entity->has('_translations') ? $entity->get('_translations') : null;
 
         if (!$translations && !$entity->isDirty('_translations')) {
             return;
         }
 
         $fields = $this->_config['fields'];
-        $primaryKey = (array)$this->table->getPrimaryKey();
-        $key = $entity->get((string)current($primaryKey));
+        if ($entity->isNew()) {
+            $key = null;
+        } else {
+            $primaryKey = (array)$this->table->getPrimaryKey();
+            $key = $entity->get((string)current($primaryKey));
+        }
         $find = [];
         $contents = [];
         $entityClass = $this->translationTable->getEntityClass();
@@ -492,6 +496,7 @@ class EavStrategy implements TranslateStrategyInterface
                 $contents[$i]->setNew(false);
             } else {
                 $translation['model'] = $this->_config['referenceName'];
+                unset($translation['foreign_key IS']);
                 $contents[$i]->set($translation, ['setter' => false, 'guard' => false]);
                 $contents[$i]->setNew(true);
             }
