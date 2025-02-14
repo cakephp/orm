@@ -284,12 +284,31 @@ class HasMany extends Association
         $this->setSaveStrategy(self::SAVE_APPEND);
         $property = $this->getProperty();
 
-        $currentEntities = array_unique(
-            array_merge(
-                (array)$sourceEntity->get($property),
-                $targetEntities,
-            ),
-        );
+        $currentEntities = (array)$sourceEntity->get($property);
+        if ($currentEntities === []) {
+            $currentEntities = $targetEntities;
+        } else {
+            $pkFields = (array)$this->getTarget()->getPrimaryKey();
+            $targetEntities = (new Collection($targetEntities))
+                ->reject(
+                    function (EntityInterface $entity) use ($currentEntities, $pkFields) {
+                        if ($entity->isNew()) {
+                            return false;
+                        }
+
+                        foreach ($currentEntities as $cEntity) {
+                            if ($entity->extract($pkFields) === $cEntity->extract($pkFields)) {
+                                return true;
+                            }
+                        }
+
+                        return false;
+                    },
+                )
+                ->toList();
+
+            $currentEntities = array_merge($currentEntities, $targetEntities);
+        }
 
         $sourceEntity->set($property, $currentEntities);
 
