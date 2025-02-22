@@ -228,7 +228,11 @@ class HasMany extends Association
             }
 
             if ($foreignKeyReference !== $entity->extract($foreignKey)) {
-                $entity->set($foreignKeyReference, ['guard' => false]);
+                if (method_exists($entity, 'patch')) {
+                    $entity->patch($foreignKeyReference, ['guard' => false]);
+                } else {
+                    $entity->set($foreignKeyReference, ['guard' => false]);
+                }
             }
 
             if ($table->save($entity, $options)) {
