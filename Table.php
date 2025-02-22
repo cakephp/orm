@@ -2172,7 +2172,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $success = false;
         if ($statement->rowCount() !== 0) {
             $success = $entity;
-            $entity->set($filteredKeys, ['guard' => false]);
+
+            if (method_exists($entity, 'patch')) {
+                $entity = $entity->patch($filteredKeys, ['guard' => false]);
+            } else {
+                $entity->set($filteredKeys, ['guard' => false]);
+            }
+
             $schema = $this->getSchema();
             $driver = $this->getConnection()->getDriver();
             foreach ($primary as $key => $v) {
