@@ -30,11 +30,11 @@
         "cakephp/database": "5.2.*@dev",
         "cakephp/event": "5.2.*@dev",
         "cakephp/utility": "5.2.*@dev",
-        "cakephp/validation": "^5.2"
+        "cakephp/validation": "5.2.*@dev"
     },
     "require-dev": {
         "cakephp/cache": "5.2.*@dev",
-        "cakephp/i18n": "^5.2"
+        "cakephp/i18n": "5.2.*@dev"
     },
     "autoload": {
         "psr-4": {
