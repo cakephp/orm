@@ -243,7 +243,11 @@ class Marshaller
                 }
             }
         } else {
-            $entity->set($properties, ['asOriginal' => true]);
+            if (method_exists($entity, 'patch')) {
+                $entity->patch($properties, ['asOriginal' => true]);
+            } else {
+                $entity->set($properties, ['asOriginal' => true]);
+            }
         }
 
         // Don't flag clean association entities as
@@ -603,7 +607,11 @@ class Marshaller
 
         $entity->setErrors($errors);
         if (!isset($options['fields'])) {
-            $entity->set($properties);
+            if (method_exists($entity, 'patch')) {
+                $entity->patch($properties);
+            } else {
+                $entity->set($properties);
+            }
 
             foreach ($properties as $field => $value) {
                 if ($value instanceof EntityInterface) {

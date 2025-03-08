@@ -420,7 +420,11 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         }
 
         if ($translation) {
-            $translation->set($values);
+            if (method_exists($translation, 'patch')) {
+                $translation->patch($values);
+            } else {
+                $translation->set($values);
+            }
         } else {
             $translation = new ($this->translationTable->getEntityClass())(
                 $where + $values,
@@ -616,7 +620,11 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 if ($key !== null) {
                     $update['id'] = $key;
                 }
-                $translation->set($update, ['guard' => false]);
+                if (method_exists($translation, 'patch')) {
+                    $translation->patch($update, ['guard' => false]);
+                } else {
+                    $translation->set($update, ['guard' => false]);
+                }
             }
         }
 

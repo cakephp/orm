@@ -507,7 +507,11 @@ class EavStrategy implements TranslateStrategyInterface
             } else {
                 $translation['model'] = $this->_config['referenceName'];
                 unset($translation['foreign_key IS']);
-                $contents[$i]->set($translation, ['setter' => false, 'guard' => false]);
+                if (method_exists($contents[$i], 'patch')) {
+                    $contents[$i]->patch($translation, ['setter' => false, 'guard' => false]);
+                } else {
+                    $contents[$i]->set($translation, ['setter' => false, 'guard' => false]);
+                }
                 $contents[$i]->setNew(true);
             }
         }
