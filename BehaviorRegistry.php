@@ -218,7 +218,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * @param \Cake\ORM\Behavior $object instance to store in the registry
      * @return $this
      */
-    public function set(string $name, object $object)
+    public function set(string $name, object $object): static
     {
         parent::set($name, $object);
 
