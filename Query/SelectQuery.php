@@ -142,7 +142,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     protected ?int $_resultsCount = null;
 
     /**
-     * Resultset factory
+     * Result set factory
      *
      * @var \Cake\ORM\ResultSetFactory<\Cake\Datasource\EntityInterface|array>
      */
@@ -205,7 +205,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     /**
      * Set the result set for a query.
      *
-     * Setting the resultset of a query will make execute() a no-op. Instead
+     * Setting the result set of a query will make execute() a no-op. Instead
      * of executing the SQL query and fetching results, the ResultSet provided to this
      * method will be returned.
      *
@@ -1578,7 +1578,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     }
 
     /**
-     * Get resultset factory.
+     * Get result set factory.
      *
      * @return \Cake\ORM\ResultSetFactory
      */
