@@ -892,11 +892,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $association = $this->findAssociation($name);
         if (!$association) {
-            $assocations = $this->associations()->keys();
+            $associations = $this->associations()->keys();
 
             $message = "The `{$name}` association is not defined on `{$this->getAlias()}`.";
-            if ($assocations) {
-                $message .= "\nValid associations are: " . implode(', ', $assocations);
+            if ($associations) {
+                $message .= "\nValid associations are: " . implode(', ', $associations);
             }
             throw new InvalidArgumentException($message);
         }

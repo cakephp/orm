@@ -39,7 +39,7 @@ class ResultSetFactory
     protected string $resultSetClass = ResultSet::class;
 
     /**
-     * Create a resultset instance.
+     * Create a result set instance.
      *
      * @param iterable $results Results.
      * @param \Cake\ORM\Query\SelectQuery<T>|null $query Query from where results came.
