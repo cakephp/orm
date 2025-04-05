@@ -95,7 +95,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *   using `ShadowTableStrategy` then the list will be auto generated based on
      *   shadow table schema.
      * - `defaultLocale`: The locale which is treated as default by the behavior.
-     *   Fields values for defaut locale will be stored in the primary table itself
+     *   Fields values for default locale will be stored in the primary table itself
      *   and the rest in translation table. If not explicitly set the value of
      *   `I18n::getDefaultLocale()` will be used to get default locale.
      *   If you do not want any default locale and want translated fields
