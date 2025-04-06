@@ -47,10 +47,6 @@ class TimestampBehavior extends Behavior
      */
     protected array $_defaultConfig = [
         'implementedFinders' => [],
-        'implementedMethods' => [
-            'timestamp' => 'timestamp',
-            'touch' => 'touch',
-        ],
         'events' => [
             'Model.beforeSave' => [
                 'created' => 'new',
