@@ -242,11 +242,11 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         $instance = $this->get($name);
         $result = parent::unload($name);
 
-        $methods = $instance->implementedMethods();
+        $methods = array_map('strtolower', array_keys($instance->implementedMethods()));
         foreach ($methods as $method) {
             unset($this->_methodMap[$method]);
         }
-        $finders = $instance->implementedFinders();
+        $finders = array_map('strtolower', array_keys($instance->implementedFinders()));
         foreach ($finders as $finder) {
             unset($this->_finderMap[$finder]);
         }
