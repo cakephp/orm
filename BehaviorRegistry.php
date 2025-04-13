@@ -24,7 +24,6 @@ use Cake\Event\EventDispatcherTrait;
 use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\ORM\Query\SelectQuery;
 use LogicException;
-use function Cake\Core\deprecationWarning;
 
 /**
  * BehaviorRegistry is used as a registry for loaded behaviors and handles loading
@@ -48,13 +47,6 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * @var \Cake\ORM\Table
      */
     protected Table $_table;
-
-    /**
-     * Method mappings.
-     *
-     * @var array<string, array>
-     */
-    protected array $_methodMap = [];
 
     /**
      * Finder method mappings.
@@ -156,19 +148,13 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         if ($enable) {
             $this->getEventManager()->on($instance);
         }
-        $methods = $this->_getMethods($instance, $class, $alias);
-        $this->_methodMap += $methods['methods'];
-        $this->_finderMap += $methods['finders'];
+        $this->_finderMap += $this->getFinderMethods($instance, $class, $alias);
 
         return $instance;
     }
 
     /**
-     * Get the behavior methods and ensure there are no duplicates.
-     *
-     * Use the implementedEvents() method to exclude callback methods.
-     * Methods starting with `_` will be ignored, as will methods
-     * declared on Cake\ORM\Behavior
+     * Get the behavior finder methods and ensure there are no duplicates.
      *
      * @param \Cake\ORM\Behavior $instance The behavior to get methods from.
      * @param string $class The classname that is missing.
@@ -176,10 +162,9 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * @return array A list of implemented finders and methods.
      * @throws \LogicException when duplicate methods are connected.
      */
-    protected function _getMethods(Behavior $instance, string $class, string $alias): array
+    protected function getFinderMethods(Behavior $instance, string $class, string $alias): array
     {
         $finders = array_change_key_case($instance->implementedFinders());
-        $methods = array_change_key_case($instance->implementedMethods());
 
         foreach ($finders as $finder => $methodName) {
             if (isset($this->_finderMap[$finder]) && $this->has($this->_finderMap[$finder][0])) {
@@ -195,21 +180,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
             $finders[$finder] = [$alias, $methodName];
         }
 
-        foreach ($methods as $method => $methodName) {
-            if (isset($this->_methodMap[$method]) && $this->has($this->_methodMap[$method][0])) {
-                $duplicate = $this->_methodMap[$method];
-                $error = sprintf(
-                    '`%s` contains duplicate method `%s` which is already provided by `%s`.',
-                    $class,
-                    $method,
-                    $duplicate[0],
-                );
-                throw new LogicException($error);
-            }
-            $methods[$method] = [$alias, $methodName];
-        }
-
-        return compact('methods', 'finders');
+        return $finders;
     }
 
     /**
@@ -223,9 +194,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     {
         parent::set($name, $object);
 
-        $methods = $this->_getMethods($object, $object::class, $name);
-        $this->_methodMap += $methods['methods'];
-        $this->_finderMap += $methods['finders'];
+        $this->_finderMap += $this->getFinderMethods($object, $object::class, $name);
 
         return $this;
     }
@@ -243,33 +212,12 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         $instance = $this->get($name);
         $result = parent::unload($name);
 
-        $methods = array_map('strtolower', array_keys($instance->implementedMethods()));
-        foreach ($methods as $method) {
-            unset($this->_methodMap[$method]);
-        }
         $finders = array_map('strtolower', array_keys($instance->implementedFinders()));
         foreach ($finders as $finder) {
             unset($this->_finderMap[$finder]);
         }
 
         return $result;
-    }
-
-    /**
-     * Check if any loaded behavior implements a method.
-     *
-     * Will return true if any behavior provides a public non-finder method
-     * with the chosen name.
-     *
-     * @param string $method The method to check for.
-     * @return bool
-     * @deprecated 5.3.0 Calling behavior methods on the table instance is deprecated.
-     */
-    public function hasMethod(string $method): bool
-    {
-        $method = strtolower($method);
-
-        return isset($this->_methodMap[$method]);
     }
 
     /**
@@ -286,38 +234,6 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         $method = strtolower($method);
 
         return isset($this->_finderMap[$method]);
-    }
-
-    /**
-     * Invoke a method on a behavior.
-     *
-     * @param string $method The method to invoke.
-     * @param array $args The arguments you want to invoke the method with.
-     * @return mixed The return value depends on the underlying behavior method.
-     * @throws \BadMethodCallException When the method is unknown.
-     * @deprecated 5.3.0 Calling behavior methods on the table instance is deprecated.
-     */
-    public function call(string $method, array $args = []): mixed
-    {
-        deprecationWarning(
-            '5.3.0',
-            sprintf(
-                'Calling behavior methods on the table instance is deprecated.'
-                . '  Use `$table->getBehavior(\'YourBehavior\')->%s()` instead.',
-                $method,
-            ),
-        );
-
-        $method = strtolower($method);
-        if ($this->hasMethod($method) && $this->has($this->_methodMap[$method][0])) {
-            [$behavior, $callMethod] = $this->_methodMap[$method];
-
-            return $this->_loaded[$behavior]->{$callMethod}(...$args);
-        }
-
-        throw new BadMethodCallException(
-            sprintf('Cannot call `%s`, it does not belong to any attached behavior.', $method),
-        );
     }
 
     /**

@@ -126,7 +126,7 @@ class Behavior implements EventListenerInterface
     /**
      * Reflection method cache for behaviors.
      *
-     * Stores the reflected method + finder methods per class.
+     * Stores the reflected finder methods per class.
      * This prevents reflecting the same class multiple times in a single process.
      *
      * @var array<string, array>
@@ -154,11 +154,6 @@ class Behavior implements EventListenerInterface
     {
         $config = $this->_resolveMethodAliases(
             'implementedFinders',
-            $this->_defaultConfig,
-            $config,
-        );
-        $config = $this->_resolveMethodAliases(
-            'implementedMethods',
             $this->_defaultConfig,
             $config,
         );
@@ -233,7 +228,7 @@ class Behavior implements EventListenerInterface
      */
     public function verifyConfig(): void
     {
-        $keys = ['implementedFinders', 'implementedMethods'];
+        $keys = ['implementedFinders'];
         foreach ($keys as $key) {
             if (!isset($this->_config[$key])) {
                 continue;
@@ -329,40 +324,7 @@ class Behavior implements EventListenerInterface
             return $methods;
         }
 
-        return $this->_reflectionCache()['finders'];
-    }
-
-    /**
-     * implementedMethods
-     *
-     * Provides an alias->methodname map of which methods a behavior implements. Example:
-     *
-     * ```
-     *  [
-     *    'method' => 'method',
-     *    'aliasedMethod' => 'somethingElse'
-     *  ]
-     * ```
-     *
-     * With the above example, a call to `$table->method()` will call `$behavior->method()`
-     * and a call to `$table->aliasedMethod()` will call `$behavior->somethingElse()`
-     *
-     * It is recommended, though not required, to define implementedFinders in the config property
-     * of child classes such that it is not necessary to use reflections to derive the available
-     * method list. See core behaviors for examples
-     *
-     * @return array
-     * @throws \ReflectionException
-     * @deprecated 5.3.0 Calling behavior methods on the table instance is deprecated.
-     */
-    public function implementedMethods(): array
-    {
-        $methods = $this->getConfig('implementedMethods');
-        if ($methods !== null) {
-            return $methods;
-        }
-
-        return $this->_reflectionCache()['methods'];
+        return $this->_reflectionCache();
     }
 
     /**
@@ -401,10 +363,7 @@ class Behavior implements EventListenerInterface
             self::$_reflectionCache[$baseClass] = $baseMethods;
         }
 
-        $return = [
-            'finders' => [],
-            'methods' => [],
-        ];
+        $return = [];
 
         $reflection = new ReflectionClass($class);
 
@@ -418,9 +377,7 @@ class Behavior implements EventListenerInterface
             }
 
             if (str_starts_with($methodName, 'find')) {
-                $return['finders'][lcfirst(substr($methodName, 4))] = $methodName;
-            } else {
-                $return['methods'][$methodName] = $methodName;
+                $return[lcfirst(substr($methodName, 4))] = $methodName;
             }
         }
 
