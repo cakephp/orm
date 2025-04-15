@@ -91,7 +91,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      *
      * @param string $class Partial classname to resolve.
      * @return string|null Either the correct classname or null.
-     * @psalm-return class-string|null
+     * @phpstan-return class-string|null
      */
     public static function className(string $class): ?string
     {

@@ -74,7 +74,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * Default strategy class name.
      *
      * @var string
-     * @psalm-var class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface>
+     * @phpstan-var class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface>
      */
     protected static string $defaultStrategyClass = ShadowTableStrategy::class;
 
@@ -139,7 +139,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @param string $class Class name.
      * @return void
      * @since 4.0.0
-     * @psalm-param class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface> $class
+     * @phpstan-param class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface> $class
      */
     public static function setDefaultStrategyClass(string $class): void
     {
@@ -151,7 +151,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @return string
      * @since 4.0.0
-     * @psalm-return class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface>
+     * @phpstan-return class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface>
      */
     public static function getDefaultStrategyClass(): string
     {
