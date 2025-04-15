@@ -155,6 +155,7 @@ use function Cake\Core\namespaceSplit;
  *
  * @see \Cake\Event\EventManager for reference on the events system.
  * @link https://book.cakephp.org/5/en/orm/table-objects.html#event-list
+ * @template TBehaviors of array<string, \Cake\ORM\Behavior>
  * @implements \Cake\Event\EventDispatcherInterface<\Cake\ORM\Table>
  */
 class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
@@ -844,6 +845,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $name The behavior alias to get from the registry.
      * @return \Cake\ORM\Behavior
+     * @template TName of key-of<TBehaviors>
+     * @phpstan-param TName $name The behavior alias to get from the registry.
+     * @phpstan-return TBehaviors[TName]
+     * @psalm-return \Cake\ORM\Behavior
      * @throws \InvalidArgumentException If the behavior does not exist.
      */
     public function getBehavior(string $name): Behavior
