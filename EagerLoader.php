@@ -375,7 +375,6 @@ class EagerLoader
             }
 
             if (!is_array($options)) {
-                /** @psalm-suppress InvalidArrayOffset */
                 $options = [$options => []];
             }
 
