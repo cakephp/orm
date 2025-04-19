@@ -2871,7 +2871,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Get the object used to marshal/convert array data into objects.
      *
      * Override this method if you want a table object to use custom
-     * marshalling logic.
+     * marshaling logic.
      *
      * @return \Cake\ORM\Marshaller
      * @see \Cake\ORM\Marshaller
@@ -3061,7 +3061,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * Those entries in `$entities` that cannot be matched to any record in
      * `$data` will be discarded. Records in `$data` that could not be matched will
-     * be marshalled as a new entity.
+     * be marshaled as a new entity.
      *
      * When merging HasMany or BelongsToMany associations, all the entities in the
      * `$data` array will appear, those that can be matched by primary key will get

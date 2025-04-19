@@ -253,13 +253,13 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     /**
      * {@inheritDoc}
      *
-     * Add in `_translations` marshalling handlers. You can disable marshalling
+     * Add in `_translations` marshaling handlers. You can disable marshaling
      * of translations by setting `'translations' => false` in the options
      * provided to `Table::newEntity()` or `Table::patchEntity()`.
      *
-     * @param \Cake\ORM\Marshaller $marshaller The marshaller of the table the behavior is attached to.
+     * @param \Cake\ORM\Marshaller $marshaller The marshaler of the table the behavior is attached to.
      * @param array $map The property map being built.
-     * @param array<string, mixed> $options The options array used in the marshalling call.
+     * @param array<string, mixed> $options The options array used in the marshaling call.
      * @return array A map of `[property => callable]` of additional properties to marshal.
      */
     public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array
