@@ -24,6 +24,8 @@ use Cake\Validation\Validator;
 
 /**
  * Provides model callbacks.
+ *
+ * @phpstan-ignore trait.unused
  */
 trait TableEventsTrait
 {
