@@ -54,7 +54,7 @@ trait TableEventsTrait
         EventInterface $event,
         EntityInterface $entity,
         ArrayObject $data,
-        ArrayObject $options
+        ArrayObject $options,
     ): void {
     }
 
@@ -180,7 +180,7 @@ trait TableEventsTrait
         EventInterface $event,
         EntityInterface $entity,
         ArrayObject $options,
-        string $operation
+        string $operation,
     ): void {
     }
 
@@ -200,7 +200,7 @@ trait TableEventsTrait
         EntityInterface $entity,
         ArrayObject $options,
         bool $result,
-        string $operation
+        string $operation,
     ): void {
     }
 }
