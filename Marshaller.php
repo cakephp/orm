@@ -59,9 +59,9 @@ class Marshaller
     }
 
     /**
-     * Build the map of property => marshalling callable.
+     * Build the map of property => marshaling callable.
      *
-     * @param array $data The data being marshalled.
+     * @param array $data The data being marshaled.
      * @param array<string, mixed> $options List of options containing the 'associated' key.
      * @throws \InvalidArgumentException When associations do not exist.
      * @return array
@@ -155,7 +155,7 @@ class Marshaller
      *
      * - validate: Set to false to disable validation. Can also be a string of the validator ruleset to be applied.
      *   Defaults to true/default.
-     * - associated: Associations listed here will be marshalled as well. Defaults to null.
+     * - associated: Associations listed here will be marshaled as well. Defaults to null.
      * - fields: An allowed list of fields to be assigned to the entity. If not present,
      *   the accessible fields list in the entity will be used. Defaults to null.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields. Defaults to null
@@ -226,7 +226,7 @@ class Marshaller
             }
 
             if ($value === '' && in_array($key, $primaryKey, true)) {
-                // Skip marshalling '' for pk fields.
+                // Skip marshaling '' for pk fields.
                 continue;
             }
             if (isset($propertyMap[$key])) {
@@ -357,7 +357,7 @@ class Marshaller
      *
      * - validate: Set to false to disable validation. Can also be a string of the validator ruleset to be applied.
      *   Defaults to true/default.
-     * - associated: Associations listed here will be marshalled as well. Defaults to null.
+     * - associated: Associations listed here will be marshaled as well. Defaults to null.
      * - fields: An allowed list of fields to be assigned to the entity. If not present,
      *   the accessible fields list in the entity will be used. Defaults to null.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields. Defaults to null
@@ -533,7 +533,7 @@ class Marshaller
      *
      * ### Options:
      *
-     * - associated: Associations listed here will be marshalled as well.
+     * - associated: Associations listed here will be marshaled as well.
      * - validate: Whether to validate data before hydrating the entities. Can
      *   also be set to a string to use a specific validator. Defaults to true/default.
      * - fields: An allowed list of fields to be assigned to the entity. If not present
@@ -647,7 +647,7 @@ class Marshaller
      * Records in `$data` are matched against the entities using the primary key
      * column. Entries in `$entities` that cannot be matched to any record in
      * `$data` will be discarded. Records in `$data` that could not be matched will
-     * be marshalled as a new entity.
+     * be marshaled as a new entity.
      *
      * When merging HasMany or BelongsToMany associations, all the entities in the
      * `$data` array will appear, those that can be matched by primary key will get
@@ -657,7 +657,7 @@ class Marshaller
      *
      * - validate: Whether to validate data before hydrating the entities. Can
      *   also be set to a string to use a specific validator. Defaults to true/default.
-     * - associated: Associations listed here will be marshalled as well.
+     * - associated: Associations listed here will be marshaled as well.
      * - fields: An allowed list of fields to be assigned to the entity. If not present,
      *   the accessible fields list in the entity will be used.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields.
@@ -864,7 +864,7 @@ class Marshaller
             $hash = spl_object_hash($record);
             $value = $this->fieldValue($record, $junctionProperty);
 
-            // Already an entity, no further marshalling required.
+            // Already an entity, no further marshaling required.
             if ($value instanceof EntityInterface) {
                 continue;
             }
