@@ -22,7 +22,7 @@ use Cake\Core\ObjectRegistry;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\ORM\Exception\MissingBehaviorException;
-use Cake\ORM\Query\SelectQuery;
+use Closure;
 use LogicException;
 
 /**
@@ -237,29 +237,29 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     }
 
     /**
-     * Invoke a finder on a behavior.
+     * Get a finder callable on a behavior.
      *
      * @internal
-     * @template TSubject of \Cake\Datasource\EntityInterface|array
-     * @param string $type The finder type to invoke.
-     * @param \Cake\ORM\Query\SelectQuery<TSubject> $query The query object to apply the finder options to.
-     * @param mixed ...$args Arguments that match up to finder-specific parameters
-     * @return \Cake\ORM\Query\SelectQuery<TSubject> The return value depends on the underlying behavior method.
-     * @throws \BadMethodCallException When the method is unknown.
+     * @param string $type The finder to get.
+     * @return \Closure
+     * @throws \BadMethodCallException When the finder is unknown.
      */
-    public function callFinder(string $type, SelectQuery $query, mixed ...$args): SelectQuery
+    public function getFinder(string $type): Closure
     {
         $type = strtolower($type);
 
-        if ($this->hasFinder($type) && $this->has($this->_finderMap[$type][0])) {
+        if ($this->hasFinder($type)) {
             [$behavior, $callMethod] = $this->_finderMap[$type];
-            $callable = $this->_loaded[$behavior]->$callMethod(...);
 
-            return $this->_table->invokeFinder($callable, $query, $args);
+            return $this->_loaded[$behavior]->$callMethod(...);
         }
 
         throw new BadMethodCallException(
-            sprintf('Cannot call finder `%s`, it does not belong to any attached behavior.', $type),
+            sprintf(
+                'Finder `%s` not found on any behavior attached to `%s`.',
+                $type,
+                $this->_table::class,
+            ),
         );
     }
 }
