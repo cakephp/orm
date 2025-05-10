@@ -2611,7 +2611,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         if ($this->_behaviors->hasFinder($type)) {
-            return $this->_behaviors->callFinder($type, $query, ...$args);
+            return $this->invokeFinder($this->_behaviors->getFinder($type), $query, $args);
         }
 
         throw new BadMethodCallException(sprintf(
@@ -2622,14 +2622,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * @internal
+     * Invokes the finder callable with appropriate arguments.
+     *
      * @template TSubject of \Cake\Datasource\EntityInterface|array
      * @param \Closure $callable Callable.
      * @param \Cake\ORM\Query\SelectQuery<TSubject> $query The query object.
      * @param array $args Arguments for the callable.
      * @return \Cake\ORM\Query\SelectQuery<TSubject>
      */
-    public function invokeFinder(Closure $callable, SelectQuery $query, array $args): SelectQuery
+    protected function invokeFinder(Closure $callable, SelectQuery $query, array $args): SelectQuery
     {
         $reflected = new ReflectionFunction($callable);
         $params = $reflected->getParameters();
