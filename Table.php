@@ -1486,7 +1486,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Get an article and some relationships:
      *
      * ```
-     * $article = $articles->get(1, ['contain' => ['Users', 'Comments']]);
+     * $article = $articles->get(1, contain: ['Users', 'Comments']]);
      * ```
      *
      * @param mixed $primaryKey primary key value to find
