@@ -550,7 +550,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 unset($schema['_constraints']);
             }
 
-            $schema = $this->getConnection()->getDriver()->newTableSchema($this->getTable(), $schema);
+            $schema = $this->getConnection()->getWriteDriver()->newTableSchema($this->getTable(), $schema);
 
             foreach ($constraints as $name => $value) {
                 $schema->addConstraint($name, $value);
@@ -581,7 +581,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ));
         }
 
-        $maxLength = $this->getConnection()->getDriver()->getMaxAliasLength();
+        $maxLength = $this->getConnection()->getWriteDriver()->getMaxAliasLength();
         if ($maxLength === null) {
             return;
         }
@@ -2183,7 +2183,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
 
             $schema = $this->getSchema();
-            $driver = $this->getConnection()->getDriver();
+            $driver = $this->getConnection()->getWriteDriver();
             foreach ($primary as $key => $v) {
                 if (!isset($data[$key])) {
                     $id = $statement->lastInsertId($this->getTable(), $key);
