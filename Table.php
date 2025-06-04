@@ -2718,9 +2718,19 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         if ($args) {
-            $query->applyOptions($args);
+            $unNamedArgs = [];
+            $namedArgs = [];
+            foreach ($args as $key => $value) {
+                if (is_int($key)) {
+                    $unNamedArgs[$key] = $value;
+                } else {
+                    $namedArgs[$key] = $value;
+                }
+            }
+
+            $query->applyOptions($namedArgs);
             // Fetch custom args without the query options.
-            $args = array_intersect_key($args, $query->getOptions());
+            $args = $unNamedArgs + array_intersect_key($args, $query->getOptions());
 
             unset($params[0]);
             $lastParam = end($params);
