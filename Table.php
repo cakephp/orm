@@ -541,7 +541,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 unset($schema['_constraints']);
             }
 
-            $schema = $this->getConnection()->getDriver()->newTableSchema($this->getTable(), $schema);
+            $schema = $this->getConnection()->getWriteDriver()->newTableSchema($this->getTable(), $schema);
 
             foreach ($constraints as $name => $value) {
                 $schema->addConstraint($name, $value);
@@ -572,7 +572,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ));
         }
 
-        $maxLength = $this->getConnection()->getDriver()->getMaxAliasLength();
+        $maxLength = $this->getConnection()->getWriteDriver()->getMaxAliasLength();
         if ($maxLength === null) {
             return;
         }
@@ -2150,7 +2150,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $success = $entity;
             $entity->patch($filteredKeys, ['guard' => false]);
             $schema = $this->getSchema();
-            $driver = $this->getConnection()->getDriver();
+            $driver = $this->getConnection()->getWriteDriver();
             foreach ($primary as $key => $v) {
                 if (!isset($data[$key])) {
                     $id = $statement->lastInsertId($this->getTable(), $key);
@@ -2638,7 +2638,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($args) {
             $query->applyOptions($args);
             // Fetch custom args without the query options.
-            $args = $query->getOptions();
+            $args = array_intersect_key($args, $query->getOptions());
 
             unset($params[0]);
             $lastParam = end($params);
