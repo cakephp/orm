@@ -82,10 +82,10 @@ trait TranslateStrategyTrait
     }
 
     /**
-     * Returns the current locale excluding any options set with @.
+     * Returns the current locale.
      *
      * If no locale has been explicitly set via `setLocale()`, this method will return
-     * the currently configured global locale.
+     * the currently configured global locale excluding any options set after @.
      *
      * @return string
      * @see \Cake\I18n\I18n::getLocale()
