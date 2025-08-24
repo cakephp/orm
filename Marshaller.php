@@ -209,7 +209,13 @@ class Marshaller
                 $entity->setPatchable($key, $value);
             }
         }
-        $errors = $this->validate($data, $options['validate'], true);
+
+        $fieldsToValidate = $options['strictFields'] ? (array)$options['fields'] : [];
+        $context = [
+            'entity' => $entity,
+            'fields' => $fieldsToValidate,
+        ];
+        $errors = $this->validate($data, $options['validate'], true, $context);
 
         $options['isMerge'] = false;
         $propertyMap = $this->buildPropertyMap($data, $options);
@@ -266,10 +272,11 @@ class Marshaller
      * @param array $data The data to validate.
      * @param string|bool $validator Validator name or `true` for default validator.
      * @param bool $isNew Whether it is a new entity or one to be updated.
+     * @param array<string, mixed> $context Additional validation context.
      * @return array The list of validation errors.
      * @throws \RuntimeException If no validator can be created.
      */
-    protected function validate(array $data, string|bool $validator, bool $isNew): array
+    protected function validate(array $data, string|bool $validator, bool $isNew, array $context = []): array
     {
         if (!$validator) {
             return [];
@@ -279,7 +286,7 @@ class Marshaller
             $validator = null;
         }
 
-        return $this->_table->getValidator($validator)->validate($data, $isNew);
+        return $this->_table->getValidator($validator)->validate($data, $isNew, $context);
     }
 
     /**
@@ -291,7 +298,7 @@ class Marshaller
      */
     protected function prepareDataAndOptions(array $data, array $options): array
     {
-        $options += ['validate' => true];
+        $options += ['validate' => true, 'fields' => null, 'strictFields' => false];
 
         $tableName = $this->_table->getAlias();
         if (isset($data[$tableName]) && is_array($data[$tableName])) {
@@ -580,7 +587,12 @@ class Marshaller
             }
         }
 
-        $errors = $this->validate($data + $keys, $options['validate'], $isNew);
+        $fieldsToValidate = $options['strictFields'] ? (array)$options['fields'] : [];
+        $context = [
+            'entity' => $entity,
+            'fields' => $fieldsToValidate,
+        ];
+        $errors = $this->validate($data + $keys, $options['validate'], $isNew, $context);
         $options['isMerge'] = true;
         $propertyMap = $this->buildPropertyMap($data, $options);
         $properties = [];
