@@ -584,7 +584,7 @@ abstract class Association
     public function getProperty(): string
     {
         if (!isset($this->_propertyName)) {
-            $this->setProperty($this->_propertyName());
+            $this->setProperty($this->propertyName());
         }
 
         return $this->_propertyName;
