@@ -568,7 +568,7 @@ abstract class Association
                     E_USER_WARNING,
                 );
             }
-        } catch (DatabaseException $e) {
+        } catch (DatabaseException) {
             // Schema is not yet loaded, can't check for clashes
         }
 
