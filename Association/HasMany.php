@@ -613,11 +613,7 @@ class HasMany extends Association
      */
     public function getForeignKey(): array|string|false
     {
-        if (!isset($this->_foreignKey)) {
-            $this->_foreignKey = $this->modelKey($this->getSource()->getTable());
-        }
-
-        return $this->_foreignKey;
+        return $this->_foreignKey ??= $this->modelKey($this->getSource()->getTable());
     }
 
     /**
