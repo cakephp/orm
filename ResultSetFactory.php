@@ -57,7 +57,7 @@ class ResultSetFactory
 
                 $results = SplFixedArray::fromArray($results);
             } else {
-                $results = (new Collection($results))
+                $results = new Collection($results)
                     ->map(function ($row) use ($data) {
                         return $this->groupResult($row, $data);
                     });
@@ -87,12 +87,12 @@ class ResultSetFactory
         ];
 
         $assocMap = $query->getEagerLoader()->associationsMap($primaryTable);
-        $data['matchingAssoc'] = (new Collection($assocMap))
+        $data['matchingAssoc'] = new Collection($assocMap)
             ->match(['matching' => true])
             ->indexBy('alias')
             ->toArray();
 
-        $data['containAssoc'] = (new Collection(array_reverse($assocMap)))
+        $data['containAssoc'] = new Collection(array_reverse($assocMap))
             ->match(['matching' => false])
             ->indexBy('nestKey')
             ->toArray();

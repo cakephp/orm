@@ -289,20 +289,17 @@ class HasMany extends Association
             $currentEntities = $targetEntities;
         } else {
             $pkFields = (array)$this->getTarget()->getPrimaryKey();
-            $targetEntities = (new Collection($targetEntities))
+            $targetEntities = new Collection($targetEntities)
                 ->reject(
                     function (EntityInterface $entity) use ($currentEntities, $pkFields) {
                         if ($entity->isNew()) {
                             return false;
                         }
 
-                        foreach ($currentEntities as $cEntity) {
-                            if ($entity->extract($pkFields) === $cEntity->extract($pkFields)) {
-                                return true;
-                            }
-                        }
-
-                        return false;
+                        return array_any(
+                            $currentEntities,
+                            fn($cEntity) => $entity->extract($pkFields) === $cEntity->extract($pkFields),
+                        );
                     },
                 )
                 ->toList();
@@ -384,7 +381,7 @@ class HasMany extends Association
         $property = $this->getProperty();
 
         $conditions = [
-            'OR' => (new Collection($targetEntities))
+            'OR' => new Collection($targetEntities)
                 ->map(function (EntityInterface $entity) use ($targetPrimaryKey) {
                     /** @var array<string> $targetPrimaryKey */
                     return $entity->extract($targetPrimaryKey);
@@ -398,7 +395,7 @@ class HasMany extends Association
         if ($options['cleanProperty'] && $result !== null) {
             $sourceEntity->set(
                 $property,
-                (new Collection($sourceEntity->get($property)))
+                new Collection($sourceEntity->get($property))
                 ->reject(
                     function ($assoc) use ($targetEntities) {
                         return in_array($assoc, $targetEntities);

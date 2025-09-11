@@ -677,7 +677,7 @@ class Marshaller
     {
         $primary = (array)$this->_table->getPrimaryKey();
 
-        $indexed = (new Collection($data))
+        $indexed = new Collection($data)
             ->groupBy(function ($el) use ($primary) {
                 $keys = [];
                 foreach ($primary as $key) {
@@ -709,7 +709,7 @@ class Marshaller
             unset($indexed[$key]);
         }
 
-        $conditions = (new Collection($indexed))
+        $conditions = new Collection($indexed)
             ->map(function ($data, $key) {
                 return explode(';', (string)$key);
             })
@@ -734,7 +734,7 @@ class Marshaller
             }
         }
 
-        foreach ((new Collection($indexed))->append($new) as $value) {
+        foreach (new Collection($indexed)->append($new) as $value) {
             if (!is_array($value)) {
                 continue;
             }
