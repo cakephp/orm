@@ -32,7 +32,7 @@ class EagerLoader
      * Nested array describing the association to be fetched
      * and the options to apply for each of them, if any
      *
-     * @var array<string, mixed>
+     * @var array<string, array>
      */
     protected array $_containments = [];
 
@@ -297,10 +297,6 @@ class EagerLoader
 
         $contain = [];
         foreach ($this->_containments as $alias => $options) {
-            if (!empty($options['instance'])) {
-                $contain = $this->_containments;
-                break;
-            }
             $contain[$alias] = $this->_normalizeContain(
                 $repository,
                 $alias,
