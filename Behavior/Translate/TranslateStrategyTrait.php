@@ -113,14 +113,14 @@ trait TranslateStrategyTrait
         /** @var array<\Cake\Datasource\EntityInterface> $translations */
         $translations = $entity->get('_translations');
         foreach ($translations as $locale => $translation) {
-            $fields = $translation->extract($this->_config['fields'], false);
+            $fields = $translation->extract($this->config['fields'], false);
             foreach ($fields as $field => $value) {
                 if ($value === null || $value === '') {
                     $translation->unset($field);
                 }
             }
 
-            $translation = $translation->extract($this->_config['fields']);
+            $translation = $translation->extract($this->config['fields']);
 
             // If now, the current locale property is empty,
             // unset it completely.
@@ -164,7 +164,7 @@ trait TranslateStrategyTrait
                 /** @var array<string, \Cake\Datasource\EntityInterface> $translations */
                 $translations = $entity->has('_translations') ? (array)$entity->get('_translations') : [];
 
-                $options['validate'] = $this->_config['validator'];
+                $options['validate'] = $this->config['validator'];
                 $errors = [];
                 foreach ($value as $language => $fields) {
                     $translations[$language] ??= $this->table->newEmptyEntity();

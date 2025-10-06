@@ -45,7 +45,7 @@ class TimestampBehavior extends Behavior
      *
      * @var array<string, mixed>
      */
-    protected array $_defaultConfig = [
+    protected array $defaultConfig = [
         'implementedFinders' => [],
         'events' => [
             'Model.beforeSave' => [
@@ -91,10 +91,10 @@ class TimestampBehavior extends Behavior
     public function handleEvent(EventInterface $event, EntityInterface $entity): void
     {
         $eventName = $event->getName();
-        $events = $this->_config['events'];
+        $events = $this->config['events'];
 
         $new = $entity->isNew();
-        $refresh = $this->_config['refreshTimestamp'];
+        $refresh = $this->config['refreshTimestamp'];
 
         foreach ($events[$eventName] as $field => $when) {
             if (!in_array($when, ['always', 'new', 'existing'], true)) {
@@ -129,7 +129,7 @@ class TimestampBehavior extends Behavior
     public function implementedEvents(): array
     {
         /** @var array<string, mixed> */
-        return array_fill_keys(array_keys($this->_config['events']), 'handleEvent');
+        return array_fill_keys(array_keys($this->config['events']), 'handleEvent');
     }
 
     /**
@@ -146,8 +146,8 @@ class TimestampBehavior extends Behavior
     public function timestamp(?DateTimeInterface $ts = null, bool $refreshTimestamp = false): DateTime
     {
         if ($ts) {
-            if ($this->_config['refreshTimestamp']) {
-                $this->_config['refreshTimestamp'] = false;
+            if ($this->config['refreshTimestamp']) {
+                $this->config['refreshTimestamp'] = false;
             }
             $this->_ts = new DateTime($ts);
         } elseif ($this->_ts === null || $refreshTimestamp) {
@@ -170,13 +170,13 @@ class TimestampBehavior extends Behavior
      */
     public function touch(EntityInterface $entity, string $eventName = 'Model.beforeSave'): bool
     {
-        $events = $this->_config['events'];
+        $events = $this->config['events'];
         if (empty($events[$eventName])) {
             return false;
         }
 
         $return = false;
-        $refresh = $this->_config['refreshTimestamp'];
+        $refresh = $this->config['refreshTimestamp'];
 
         foreach ($events[$eventName] as $field => $when) {
             if (in_array($when, ['always', 'existing'], true)) {

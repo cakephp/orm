@@ -51,7 +51,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @var array<string, mixed>
      */
-    protected array $_defaultConfig = [
+    protected array $defaultConfig = [
         'implementedFinders' => ['translations' => 'findTranslations'],
         'fields' => [],
         'defaultLocale' => null,
@@ -172,7 +172,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     protected function createStrategy(): TranslateStrategyInterface
     {
         $config = array_diff_key(
-            $this->_config,
+            $this->config,
             ['implementedFinders', 'strategyClass'],
         );
         /** @var class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface> $className */

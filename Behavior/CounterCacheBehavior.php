@@ -128,7 +128,7 @@ class CounterCacheBehavior extends Behavior
             return;
         }
 
-        foreach ($this->_config as $assoc => $settings) {
+        foreach ($this->config as $assoc => $settings) {
             $assoc = $this->_table->getAssociation($assoc);
             /** @var string|int $field */
             foreach ($settings as $field => $config) {
@@ -207,7 +207,7 @@ class CounterCacheBehavior extends Behavior
      */
     public function updateCounterCache(?string $assocName = null, int $limit = 100, ?int $page = null): void
     {
-        $config = $this->_config;
+        $config = $this->config;
         if ($assocName !== null) {
             $config = [$assocName => $config[$assocName]];
         }
@@ -297,7 +297,7 @@ class CounterCacheBehavior extends Behavior
      */
     protected function processAssociations(EventInterface $event, EntityInterface $entity): void
     {
-        foreach ($this->_config as $assoc => $settings) {
+        foreach ($this->config as $assoc => $settings) {
             $assoc = $this->_table->getAssociation($assoc);
             $this->processAssociation($event, $entity, $assoc, $settings);
         }
