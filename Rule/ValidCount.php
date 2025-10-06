@@ -30,7 +30,7 @@ class ValidCount
      *
      * @var string
      */
-    protected string $_field;
+    protected string $field;
 
     /**
      * Constructor.
@@ -39,7 +39,7 @@ class ValidCount
      */
     public function __construct(string $field)
     {
-        $this->_field = $field;
+        $this->field = $field;
     }
 
     /**
@@ -51,7 +51,7 @@ class ValidCount
      */
     public function __invoke(EntityInterface $entity, array $options): bool
     {
-        $value = $entity->{$this->_field};
+        $value = $entity->{$this->field};
         if (!is_array($value) && !$value instanceof Countable) {
             return false;
         }

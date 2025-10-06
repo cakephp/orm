@@ -42,7 +42,7 @@ class BelongsTo extends Association
      *
      * @var array<string>
      */
-    protected array $_validStrategies = [
+    protected array $validStrategies = [
         self::STRATEGY_JOIN,
         self::STRATEGY_SELECT,
     ];
@@ -52,7 +52,7 @@ class BelongsTo extends Association
      */
     public function getForeignKey(): array|string|false
     {
-        return $this->_foreignKey ??= $this->modelKey($this->getTarget()->getAlias());
+        return $this->foreignKey ??= $this->modelKey($this->getTarget()->getAlias());
     }
 
     /**
@@ -64,7 +64,7 @@ class BelongsTo extends Association
      */
     public function setForeignKey(array|string|false $key): static
     {
-        $this->_foreignKey = $key;
+        $this->foreignKey = $key;
 
         return $this;
     }
@@ -90,7 +90,7 @@ class BelongsTo extends Association
      */
     protected function propertyName(): string
     {
-        [, $name] = pluginSplit($this->_name);
+        [, $name] = pluginSplit($this->name);
 
         return Inflector::underscore(Inflector::singularize($name));
     }
@@ -166,8 +166,8 @@ class BelongsTo extends Association
     protected function joinCondition(array $options): array
     {
         $conditions = [];
-        $tAlias = $this->_name;
-        $sAlias = $this->_sourceTable->getAlias();
+        $tAlias = $this->name;
+        $sAlias = $this->sourceTable->getAlias();
         $foreignKey = (array)$options['foreignKey'];
         $bindingKey = (array)$this->getBindingKey();
 
@@ -180,7 +180,7 @@ class BelongsTo extends Association
             $msg = 'Cannot match provided foreignKey for `%s`, got `(%s)` but expected foreign key for `(%s)`.';
             throw new DatabaseException(sprintf(
                 $msg,
-                $this->_name,
+                $this->name,
                 implode(', ', $foreignKey),
                 implode(', ', $bindingKey),
             ));

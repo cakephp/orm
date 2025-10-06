@@ -37,7 +37,7 @@ trait LocatorAwareTrait
      *
      * @var \Cake\ORM\Locator\LocatorInterface|null
      */
-    protected ?LocatorInterface $_tableLocator = null;
+    protected ?LocatorInterface $tableLocator = null;
 
     /**
      * Sets the table locator.
@@ -47,7 +47,7 @@ trait LocatorAwareTrait
      */
     public function setTableLocator(LocatorInterface $tableLocator): static
     {
-        $this->_tableLocator = $tableLocator;
+        $this->tableLocator = $tableLocator;
 
         return $this;
     }
@@ -59,8 +59,8 @@ trait LocatorAwareTrait
      */
     public function getTableLocator(): LocatorInterface
     {
-        if ($this->_tableLocator !== null) {
-            return $this->_tableLocator;
+        if ($this->tableLocator !== null) {
+            return $this->tableLocator;
         }
 
         $locator = FactoryLocator::get('Table');
@@ -69,7 +69,7 @@ trait LocatorAwareTrait
             '`FactoryLocator` must return an instance of Cake\ORM\LocatorInterface for type `Table`.',
         );
 
-        return $this->_tableLocator = $locator;
+        return $this->tableLocator = $locator;
     }
 
     /**

@@ -61,7 +61,7 @@ class TimestampBehavior extends Behavior
      *
      * @var \Cake\I18n\DateTime|null
      */
-    protected ?DateTime $_ts = null;
+    protected ?DateTime $ts = null;
 
     /**
      * Initialize hook
@@ -149,12 +149,12 @@ class TimestampBehavior extends Behavior
             if ($this->config['refreshTimestamp']) {
                 $this->config['refreshTimestamp'] = false;
             }
-            $this->_ts = new DateTime($ts);
-        } elseif ($this->_ts === null || $refreshTimestamp) {
-            $this->_ts = new DateTime();
+            $this->ts = new DateTime($ts);
+        } elseif ($this->ts === null || $refreshTimestamp) {
+            $this->ts = new DateTime();
         }
 
-        return $this->_ts;
+        return $this->ts;
     }
 
     /**

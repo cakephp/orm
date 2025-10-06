@@ -198,7 +198,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @var string|null
      */
-    protected ?string $_table = null;
+    protected ?string $table = null;
 
     /**
      * Human name giving to this particular instance. Multiple objects representing
@@ -206,49 +206,49 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @var string|null
      */
-    protected ?string $_alias = null;
+    protected ?string $alias = null;
 
     /**
      * Connection instance
      *
      * @var \Cake\Database\Connection|null
      */
-    protected ?Connection $_connection = null;
+    protected ?Connection $connection = null;
 
     /**
      * The schema object containing a description of this table fields
      *
      * @var \Cake\Database\Schema\TableSchemaInterface|null
      */
-    protected ?TableSchemaInterface $_schema = null;
+    protected ?TableSchemaInterface $schema = null;
 
     /**
      * The name of the field that represents the primary key in the table
      *
      * @var array<string>|string|null
      */
-    protected array|string|null $_primaryKey = null;
+    protected array|string|null $primaryKey = null;
 
     /**
      * The name of the field that represents a human-readable representation of a row
      *
      * @var array<string>|string|null
      */
-    protected array|string|null $_displayField = null;
+    protected array|string|null $displayField = null;
 
     /**
      * The associations container for this Table.
      *
      * @var \Cake\ORM\AssociationCollection
      */
-    protected AssociationCollection $_associations;
+    protected AssociationCollection $associations;
 
     /**
      * BehaviorRegistry for this table
      *
      * @var \Cake\ORM\BehaviorRegistry
      */
-    protected BehaviorRegistry $_behaviors;
+    protected BehaviorRegistry $behaviors;
 
     /**
      * The name of the class that represent a single row for this table
@@ -256,14 +256,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @var string|null
      * @phpstan-var class-string<\Cake\Datasource\EntityInterface>|null
      */
-    protected ?string $_entityClass = null;
+    protected ?string $entityClass = null;
 
     /**
      * Registry key used to create this table object
      *
      * @var string|null
      */
-    protected ?string $_registryAlias = null;
+    protected ?string $registryAlias = null;
 
     protected QueryFactory $queryFactory;
 
@@ -313,9 +313,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         }
         $this->_eventManager = $config['eventManager'] ?? new EventManager();
-        $this->_behaviors = $config['behaviors'] ?? new BehaviorRegistry();
-        $this->_behaviors->setTable($this);
-        $this->_associations = $config['associations'] ?? new AssociationCollection();
+        $this->behaviors = $config['behaviors'] ?? new BehaviorRegistry();
+        $this->behaviors->setTable($this);
+        $this->associations = $config['associations'] ?? new AssociationCollection();
         $this->queryFactory = $config['queryFactory'] ?? new QueryFactory();
 
         $this->initialize($config);
@@ -371,7 +371,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function setTable(string $table): static
     {
-        $this->_table = $table;
+        $this->table = $table;
 
         return $this;
     }
@@ -385,18 +385,18 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function getTable(): string
     {
-        if ($this->_table === null) {
+        if ($this->table === null) {
             $table = namespaceSplit(static::class);
-            $table = substr((string)end($table), 0, -5) ?: $this->_alias;
+            $table = substr((string)end($table), 0, -5) ?: $this->alias;
             if (!$table) {
                 throw new CakeException(
                     'You must specify either the `alias` or the `table` option for the constructor.',
                 );
             }
-            $this->_table = Inflector::underscore($table);
+            $this->table = Inflector::underscore($table);
         }
 
-        return $this->_table;
+        return $this->table;
     }
 
     /**
@@ -407,7 +407,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function setAlias(string $alias): static
     {
-        $this->_alias = $alias;
+        $this->alias = $alias;
 
         return $this;
     }
@@ -419,18 +419,18 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function getAlias(): string
     {
-        if ($this->_alias === null) {
+        if ($this->alias === null) {
             $alias = namespaceSplit(static::class);
-            $alias = substr((string)end($alias), 0, -5) ?: $this->_table;
+            $alias = substr((string)end($alias), 0, -5) ?: $this->table;
             if (!$alias) {
                 throw new CakeException(
                     'You must specify either the `alias` or the `table` option for the constructor.',
                 );
             }
-            $this->_alias = $alias;
+            $this->alias = $alias;
         }
 
-        return $this->_alias;
+        return $this->alias;
     }
 
     /**
@@ -458,7 +458,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function setRegistryAlias(string $registryAlias): static
     {
-        $this->_registryAlias = $registryAlias;
+        $this->registryAlias = $registryAlias;
 
         return $this;
     }
@@ -470,7 +470,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function getRegistryAlias(): string
     {
-        return $this->_registryAlias ??= $this->getAlias();
+        return $this->registryAlias ??= $this->getAlias();
     }
 
     /**
@@ -481,7 +481,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function setConnection(Connection $connection): static
     {
-        $this->_connection = $connection;
+        $this->connection = $connection;
 
         return $this;
     }
@@ -493,13 +493,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function getConnection(): Connection
     {
-        if (!$this->_connection) {
+        if (!$this->connection) {
             $connection = ConnectionManager::get(static::defaultConnectionName());
             assert($connection instanceof Connection);
-            $this->_connection = $connection;
+            $this->connection = $connection;
         }
 
-        return $this->_connection;
+        return $this->connection;
     }
 
     /**
@@ -509,8 +509,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function getSchema(): TableSchemaInterface
     {
-        if ($this->_schema === null) {
-            $this->_schema = $this->getConnection()
+        if ($this->schema === null) {
+            $this->schema = $this->getConnection()
                 ->getSchemaCollection()
                 ->describe($this->getTable());
             if (Configure::read('debug')) {
@@ -519,7 +519,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         /** @var \Cake\Database\Schema\TableSchemaInterface */
-        return $this->_schema;
+        return $this->schema;
     }
 
     /**
@@ -548,7 +548,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         }
 
-        $this->_schema = $schema;
+        $this->schema = $schema;
         if (Configure::read('debug')) {
             $this->checkAliasLengths();
         }
@@ -565,7 +565,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function checkAliasLengths(): void
     {
-        if ($this->_schema === null) {
+        if ($this->schema === null) {
             throw new DatabaseException(sprintf(
                 'Unable to check max alias lengths for `%s` without schema.',
                 $this->getAlias(),
@@ -578,7 +578,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         $table = $this->getAlias();
-        foreach ($this->_schema->columns() as $name) {
+        foreach ($this->schema->columns() as $name) {
             if (strlen($table . '__' . $name) > $maxLength) {
                 $nameLength = $maxLength - 2;
                 throw new DatabaseException(
@@ -613,7 +613,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function setPrimaryKey(array|string $key): static
     {
-        $this->_primaryKey = $key;
+        $this->primaryKey = $key;
 
         return $this;
     }
@@ -625,15 +625,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function getPrimaryKey(): array|string
     {
-        if ($this->_primaryKey === null) {
+        if ($this->primaryKey === null) {
             $key = $this->getSchema()->getPrimaryKey();
             if (count($key) === 1) {
                 $key = $key[0];
             }
-            $this->_primaryKey = $key;
+            $this->primaryKey = $key;
         }
 
-        return $this->_primaryKey;
+        return $this->primaryKey;
     }
 
     /**
@@ -644,7 +644,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function setDisplayField(array|string $field): static
     {
-        $this->_displayField = $field;
+        $this->displayField = $field;
 
         return $this;
     }
@@ -656,14 +656,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function getDisplayField(): array|string
     {
-        if ($this->_displayField !== null) {
-            return $this->_displayField;
+        if ($this->displayField !== null) {
+            return $this->displayField;
         }
 
         $schema = $this->getSchema();
         foreach (['title', 'name', 'label'] as $field) {
             if ($schema->hasColumn($field)) {
-                return $this->_displayField = $field;
+                return $this->displayField = $field;
             }
         }
 
@@ -675,11 +675,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 $columnSchema['type'] === 'string' &&
                 !preg_match('/pass|token|secret/i', $column)
             ) {
-                return $this->_displayField = $column;
+                return $this->displayField = $column;
             }
         }
 
-        return $this->_displayField = $this->getPrimaryKey();
+        return $this->displayField = $this->getPrimaryKey();
     }
 
     /**
@@ -689,19 +689,19 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function getEntityClass(): string
     {
-        if (!$this->_entityClass) {
+        if (!$this->entityClass) {
             $default = Entity::class;
             $self = static::class;
             $parts = explode('\\', $self);
 
             if ($self === self::class || count($parts) < 3) {
-                return $this->_entityClass = $default;
+                return $this->entityClass = $default;
             }
 
             $alias = Inflector::classify(Inflector::underscore(substr(array_pop($parts), 0, -5)));
             $name = implode('\\', array_slice($parts, 0, -1)) . '\\Entity\\' . $alias;
             if (!class_exists($name)) {
-                return $this->_entityClass = $default;
+                return $this->entityClass = $default;
             }
 
             /** @var class-string<\Cake\Datasource\EntityInterface>|null $class */
@@ -710,10 +710,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 throw new MissingEntityException([$name]);
             }
 
-            $this->_entityClass = $class;
+            $this->entityClass = $class;
         }
 
-        return $this->_entityClass;
+        return $this->entityClass;
     }
 
     /**
@@ -731,7 +731,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw new MissingEntityException([$name]);
         }
 
-        $this->_entityClass = $class;
+        $this->entityClass = $class;
 
         return $this;
     }
@@ -762,7 +762,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function addBehavior(string $name, array $options = []): static
     {
-        $this->_behaviors->load($name, $options);
+        $this->behaviors->load($name, $options);
 
         return $this;
     }
@@ -814,7 +814,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function removeBehavior(string $name): static
     {
-        $this->_behaviors->unload($name);
+        $this->behaviors->unload($name);
 
         return $this;
     }
@@ -826,7 +826,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function behaviors(): BehaviorRegistry
     {
-        return $this->_behaviors;
+        return $this->behaviors;
     }
 
     /**
@@ -841,7 +841,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function getBehavior(string $name): Behavior
     {
-        if (!$this->_behaviors->has($name)) {
+        if (!$this->behaviors->has($name)) {
             throw new InvalidArgumentException(sprintf(
                 'The `%s` behavior is not defined on `%s`.',
                 $name,
@@ -850,7 +850,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         /** @var \Cake\ORM\Behavior */
-        return $this->_behaviors->get($name);
+        return $this->behaviors->get($name);
     }
 
     /**
@@ -861,7 +861,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function hasBehavior(string $name): bool
     {
-        return $this->_behaviors->has($name);
+        return $this->behaviors->has($name);
     }
 
     /**
@@ -929,13 +929,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     protected function findAssociation(string $name): ?Association
     {
         if (!str_contains($name, '.')) {
-            return $this->_associations->get($name);
+            return $this->associations->get($name);
         }
 
         $result = null;
         [$name, $next] = array_pad(explode('.', $name, 2), 2, null);
         if ($name !== null) {
-            $result = $this->_associations->get($name);
+            $result = $this->associations->get($name);
         }
 
         if ($result !== null && $next !== null) {
@@ -952,7 +952,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function associations(): AssociationCollection
     {
-        return $this->_associations;
+        return $this->associations;
     }
 
     /**
@@ -1030,7 +1030,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function belongsTo(string $associated, array $options = []): BelongsTo
     {
         /** @var \Cake\ORM\Association\BelongsTo */
-        return $this->_associations->load(BelongsTo::class, $associated, $this, $options);
+        return $this->associations->load(BelongsTo::class, $associated, $this, $options);
     }
 
     /**
@@ -1072,7 +1072,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function hasOne(string $associated, array $options = []): HasOne
     {
         /** @var \Cake\ORM\Association\HasOne */
-        return $this->_associations->load(HasOne::class, $associated, $this, $options);
+        return $this->associations->load(HasOne::class, $associated, $this, $options);
     }
 
     /**
@@ -1120,7 +1120,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function hasMany(string $associated, array $options = []): HasMany
     {
         /** @var \Cake\ORM\Association\HasMany */
-        return $this->_associations->load(HasMany::class, $associated, $this, $options);
+        return $this->associations->load(HasMany::class, $associated, $this, $options);
     }
 
     /**
@@ -1170,7 +1170,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function belongsToMany(string $associated, array $options = []): BelongsToMany
     {
         /** @var \Cake\ORM\Association\BelongsToMany */
-        return $this->_associations->load(BelongsToMany::class, $associated, $this, $options);
+        return $this->associations->load(BelongsToMany::class, $associated, $this, $options);
     }
 
     /**
@@ -1990,7 +1990,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return false;
         }
 
-        $options['associated'] = $this->_associations->normalizeKeys($options['associated']);
+        $options['associated'] = $this->associations->normalizeKeys($options['associated']);
         $event = $this->dispatchEvent('Model.beforeSave', compact('entity', 'options'));
 
         if ($event->isStopped()) {
@@ -2013,7 +2013,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $result;
         }
 
-        $saved = $this->_associations->saveParents(
+        $saved = $this->associations->saveParents(
             $this,
             $entity,
             $options['associated'],
@@ -2057,7 +2057,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function onSaveSuccess(EntityInterface $entity, ArrayObject $options): bool
     {
-        $success = $this->_associations->saveChildren(
+        $success = $this->associations->saveChildren(
             $this,
             $entity,
             $options['associated'],
@@ -2544,7 +2544,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return (bool)$event->getResult();
         }
 
-        $success = $this->_associations->cascadeDelete(
+        $success = $this->associations->cascadeDelete(
             $entity,
             ['_primary' => false] + $options->getArrayCopy(),
         );
@@ -2578,7 +2578,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $finder = 'find' . $type;
 
-        return method_exists($this, $finder) || $this->_behaviors->hasFinder($type);
+        return method_exists($this, $finder) || $this->behaviors->hasFinder($type);
     }
 
     /**
@@ -2602,8 +2602,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $this->invokeFinder($this->{$finder}(...), $query, $args);
         }
 
-        if ($this->_behaviors->hasFinder($type)) {
-            return $this->invokeFinder($this->_behaviors->getFinder($type), $query, $args);
+        if ($this->behaviors->hasFinder($type)) {
+            return $this->invokeFinder($this->behaviors->getFinder($type), $query, $args);
         }
 
         throw new BadMethodCallException(sprintf(
@@ -2756,7 +2756,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function __get(string $property): Association
     {
-        $association = $this->_associations->get($property);
+        $association = $this->associations->get($property);
         if (!$association) {
             throw new DatabaseException(sprintf(
                 'Undefined property `%s`. ' .
@@ -2779,7 +2779,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function __isset(string $property): bool
     {
-        return $this->_associations->has($property);
+        return $this->associations->has($property);
     }
 
     /**
@@ -2869,7 +2869,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function newEntity(array $data, array $options = []): EntityInterface
     {
-        $options['associated'] ??= $this->_associations->keys();
+        $options['associated'] ??= $this->associations->keys();
 
         return $this->marshaller()->one($data, $options);
     }
@@ -2908,7 +2908,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function newEntities(array $data, array $options = []): array
     {
-        $options['associated'] ??= $this->_associations->keys();
+        $options['associated'] ??= $this->associations->keys();
 
         return $this->marshaller()->many($data, $options);
     }
@@ -2966,7 +2966,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function patchEntity(EntityInterface $entity, array $data, array $options = []): EntityInterface
     {
-        $options['associated'] ??= $this->_associations->keys();
+        $options['associated'] ??= $this->associations->keys();
 
         return $this->marshaller()->merge($entity, $data, $options);
     }
@@ -3004,7 +3004,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function patchEntities(iterable $entities, array $data, array $options = []): array
     {
-        $options['associated'] ??= $this->_associations->keys();
+        $options['associated'] ??= $this->associations->keys();
 
         return $this->marshaller()->mergeMany($entities, $data, $options);
     }
@@ -3188,9 +3188,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'alias' => $this->getAlias(),
             'entityClass' => $this->getEntityClass(),
             /** @phpstan-ignore isset.initializedProperty */
-            'associations' => isset($this->_associations) ? $this->_associations->keys() : [],
+            'associations' => isset($this->associations) ? $this->associations->keys() : [],
             /** @phpstan-ignore isset.initializedProperty */
-            'behaviors' => isset($this->_behaviors) ? $this->_behaviors->loaded() : [],
+            'behaviors' => isset($this->behaviors) ? $this->behaviors->loaded() : [],
             'defaultConnection' => static::defaultConnectionName(),
             'connectionName' => $conn->configName(),
         ];

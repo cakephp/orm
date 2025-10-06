@@ -45,7 +45,7 @@ class InsertQuery extends DbInsertQuery
      */
     public function sql(?ValueBinder $binder = null): string
     {
-        if (empty($this->_parts['into'])) {
+        if (empty($this->parts['into'])) {
             $repository = $this->getRepository();
             $this->into($repository->getTable());
         }

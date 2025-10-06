@@ -45,28 +45,28 @@ class HasMany extends Association
      *
      * @var \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string|null
      */
-    protected ExpressionInterface|Closure|array|string|null $_sort = null;
+    protected ExpressionInterface|Closure|array|string|null $sort = null;
 
     /**
      * The type of join to be used when adding the association to a query
      *
      * @var string
      */
-    protected string $_joinType = SelectQuery::JOIN_TYPE_INNER;
+    protected string $joinType = SelectQuery::JOIN_TYPE_INNER;
 
     /**
      * The strategy name to be used to fetch associated records.
      *
      * @var string
      */
-    protected string $_strategy = self::STRATEGY_SELECT;
+    protected string $strategy = self::STRATEGY_SELECT;
 
     /**
      * Valid strategies for this type of association
      *
      * @var array<string>
      */
-    protected array $_validStrategies = [
+    protected array $validStrategies = [
         self::STRATEGY_SELECT,
         self::STRATEGY_SUBQUERY,
     ];
@@ -90,7 +90,7 @@ class HasMany extends Association
      *
      * @var string
      */
-    protected string $_saveStrategy = self::SAVE_APPEND;
+    protected string $saveStrategy = self::SAVE_APPEND;
 
     /**
      * Returns whether the passed table is the owning side for this
@@ -119,7 +119,7 @@ class HasMany extends Association
             throw new InvalidArgumentException($msg);
         }
 
-        $this->_saveStrategy = $strategy;
+        $this->saveStrategy = $strategy;
 
         return $this;
     }
@@ -131,7 +131,7 @@ class HasMany extends Association
      */
     public function getSaveStrategy(): string
     {
-        return $this->_saveStrategy;
+        return $this->saveStrategy;
     }
 
     /**
@@ -179,7 +179,7 @@ class HasMany extends Association
         $options['_sourceTable'] = $this->getSource();
 
         if (
-            $this->_saveStrategy === self::SAVE_REPLACE &&
+            $this->saveStrategy === self::SAVE_REPLACE &&
             !$this->unlinkAssociated($foreignKeyReference, $entity, $this->getTarget(), $targetEntities, $options)
         ) {
             return false;
@@ -533,7 +533,7 @@ class HasMany extends Association
         $mustBeDependent = (!$this->foreignKeyAcceptsNull($target, $foreignKey) || $this->getDependent());
 
         if ($mustBeDependent) {
-            if ($this->_cascadeCallbacks) {
+            if ($this->cascadeCallbacks) {
                 $conditions = new QueryExpression($conditions);
                 $conditions->traverse(function ($entry) use ($target): void {
                     if ($entry instanceof FieldInterface) {
@@ -610,7 +610,7 @@ class HasMany extends Association
      */
     public function getForeignKey(): array|string|false
     {
-        return $this->_foreignKey ??= $this->modelKey($this->getSource()->getTable());
+        return $this->foreignKey ??= $this->modelKey($this->getSource()->getTable());
     }
 
     /**
@@ -621,7 +621,7 @@ class HasMany extends Association
      */
     public function setSort(ExpressionInterface|Closure|array|string $sort): static
     {
-        $this->_sort = $sort;
+        $this->sort = $sort;
 
         return $this;
     }
@@ -633,7 +633,7 @@ class HasMany extends Association
      */
     public function getSort(): ExpressionInterface|Closure|array|string|null
     {
-        return $this->_sort;
+        return $this->sort;
     }
 
     /**

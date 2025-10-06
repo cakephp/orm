@@ -34,7 +34,7 @@ class EagerLoader
      *
      * @var array<string, array>
      */
-    protected array $_containments = [];
+    protected array $containments = [];
 
     /**
      * Contains a nested array with the compiled containments tree
@@ -42,7 +42,7 @@ class EagerLoader
      *
      * @var array<string, \Cake\ORM\EagerLoadable>|null
      */
-    protected ?array $_normalized = null;
+    protected ?array $normalized = null;
 
     /**
      * List of options accepted by associations in contain()
@@ -50,7 +50,7 @@ class EagerLoader
      *
      * @var array<string, int>
      */
-    protected array $_containOptions = [
+    protected array $containOptions = [
         'associations' => 1,
         'foreignKey' => 1,
         'conditions' => 1,
@@ -70,21 +70,21 @@ class EagerLoader
      *
      * @var array<int, \Cake\ORM\EagerLoadable>
      */
-    protected array $_loadExternal = [];
+    protected array $loadExternal = [];
 
     /**
      * Contains a list of the association names that are to be eagerly loaded.
      *
      * @var array
      */
-    protected array $_aliasList = [];
+    protected array $aliasList = [];
 
     /**
      * Another EagerLoader instance that will be used for 'matching' associations.
      *
      * @var \Cake\ORM\EagerLoader|null
      */
-    protected ?EagerLoader $_matching = null;
+    protected ?EagerLoader $matching = null;
 
     /**
      * A map of table aliases pointing to the association objects they represent
@@ -92,7 +92,7 @@ class EagerLoader
      *
      * @var array<string, \Cake\ORM\EagerLoadable>
      */
-    protected array $_joinsMap = [];
+    protected array $joinsMap = [];
 
     /**
      * Controls whether fields from associated tables will be eagerly loaded.
@@ -100,7 +100,7 @@ class EagerLoader
      *
      * @var bool
      */
-    protected bool $_autoFields = true;
+    protected bool $autoFields = true;
 
     /**
      * Sets the list of associations that should be eagerly loaded along for a
@@ -147,12 +147,12 @@ class EagerLoader
         }
 
         $associations = (array)$associations;
-        $associations = $this->reformatContain($associations, $this->_containments);
-        $this->_normalized = null;
-        $this->_loadExternal = [];
-        $this->_aliasList = [];
+        $associations = $this->reformatContain($associations, $this->containments);
+        $this->normalized = null;
+        $this->loadExternal = [];
+        $this->aliasList = [];
 
-        return $this->_containments = $associations;
+        return $this->containments = $associations;
     }
 
     /**
@@ -165,7 +165,7 @@ class EagerLoader
      */
     public function getContain(): array
     {
-        return $this->_containments;
+        return $this->containments;
     }
 
     /**
@@ -178,10 +178,10 @@ class EagerLoader
      */
     public function clearContain(): void
     {
-        $this->_containments = [];
-        $this->_normalized = null;
-        $this->_loadExternal = [];
-        $this->_aliasList = [];
+        $this->containments = [];
+        $this->normalized = null;
+        $this->loadExternal = [];
+        $this->aliasList = [];
     }
 
     /**
@@ -192,7 +192,7 @@ class EagerLoader
      */
     public function enableAutoFields(bool $enable = true): static
     {
-        $this->_autoFields = $enable;
+        $this->autoFields = $enable;
 
         return $this;
     }
@@ -204,7 +204,7 @@ class EagerLoader
      */
     public function disableAutoFields(): static
     {
-        $this->_autoFields = false;
+        $this->autoFields = false;
 
         return $this;
     }
@@ -216,7 +216,7 @@ class EagerLoader
      */
     public function isAutoFieldsEnabled(): bool
     {
-        return $this->_autoFields;
+        return $this->autoFields;
     }
 
     /**
@@ -240,7 +240,7 @@ class EagerLoader
      */
     public function setMatching(string $associationPath, ?Closure $builder = null, array $options = []): static
     {
-        $this->_matching ??= new static();
+        $this->matching ??= new static();
 
         $options += ['joinType' => SelectQuery::JOIN_TYPE_INNER];
         $sharedOptions = ['negateMatch' => false, 'matching' => true] + $options;
@@ -256,7 +256,7 @@ class EagerLoader
 
         // Add all options to target association contain which is the last in nested chain
         $nested = ['matching' => true, 'queryBuilder' => $builder] + $options;
-        $this->_matching->contain($contains);
+        $this->matching->contain($contains);
 
         return $this;
     }
@@ -268,9 +268,9 @@ class EagerLoader
      */
     public function getMatching(): array
     {
-        $this->_matching ??= new static();
+        $this->matching ??= new static();
 
-        return $this->_matching->getContain();
+        return $this->matching->getContain();
     }
 
     /**
@@ -291,12 +291,12 @@ class EagerLoader
      */
     public function normalized(Table $repository): array
     {
-        if ($this->_normalized !== null) {
-            return $this->_normalized;
+        if ($this->normalized !== null) {
+            return $this->normalized;
         }
 
         $contain = [];
-        foreach ($this->_containments as $alias => $options) {
+        foreach ($this->containments as $alias => $options) {
             $contain[$alias] = $this->normalizeContain(
                 $repository,
                 $alias,
@@ -305,7 +305,7 @@ class EagerLoader
             );
         }
 
-        return $this->_normalized = $contain;
+        return $this->normalized = $contain;
     }
 
     /**
@@ -335,7 +335,7 @@ class EagerLoader
                 $options = current($options);
             }
 
-            if (isset($this->_containOptions[$table])) {
+            if (isset($this->containOptions[$table])) {
                 $pointer[$table] = $options;
                 continue;
             }
@@ -405,7 +405,7 @@ class EagerLoader
      */
     public function attachAssociations(SelectQuery $query, Table $repository, bool $includeFields): void
     {
-        if (!$this->_containments && $this->_matching === null) {
+        if (!$this->containments && $this->matching === null) {
             return;
         }
 
@@ -439,9 +439,9 @@ class EagerLoader
     public function attachableAssociations(Table $repository): array
     {
         $contain = $this->normalized($repository);
-        $matching = $this->_matching ? $this->_matching->normalized($repository) : [];
+        $matching = $this->matching ? $this->matching->normalized($repository) : [];
         $this->fixStrategies();
-        $this->_loadExternal = [];
+        $this->loadExternal = [];
 
         return $this->resolveJoins($contain, $matching);
     }
@@ -456,13 +456,13 @@ class EagerLoader
      */
     public function externalAssociations(Table $repository): array
     {
-        if ($this->_loadExternal) {
-            return $this->_loadExternal;
+        if ($this->loadExternal) {
+            return $this->loadExternal;
         }
 
         $this->attachableAssociations($repository);
 
-        return $this->_loadExternal;
+        return $this->loadExternal;
     }
 
     /**
@@ -481,7 +481,7 @@ class EagerLoader
      */
     protected function normalizeContain(Table $parent, string $alias, array $options, array $paths): EagerLoadable
     {
-        $defaults = $this->_containOptions;
+        $defaults = $this->containOptions;
         $instance = $parent->getAssociation($alias);
 
         $paths += ['aliasPath' => '', 'propertyPath' => '', 'root' => $alias];
@@ -511,7 +511,7 @@ class EagerLoader
         $eagerLoadable = new EagerLoadable($alias, $config);
 
         if ($config['canBeJoined']) {
-            $this->_aliasList[$paths['root']][$alias][] = $eagerLoadable;
+            $this->aliasList[$paths['root']][$alias][] = $eagerLoadable;
         } else {
             $paths['root'] = $config['aliasPath'];
         }
@@ -537,7 +537,7 @@ class EagerLoader
      */
     protected function fixStrategies(): void
     {
-        foreach ($this->_aliasList as $aliases) {
+        foreach ($this->aliasList as $aliases) {
             foreach ($aliases as $configs) {
                 if (count($configs) < 2) {
                     continue;
@@ -601,7 +601,7 @@ class EagerLoader
             }
 
             $loadable->setCanBeJoined(false);
-            $this->_loadExternal[] = $loadable;
+            $this->loadExternal[] = $loadable;
         }
 
         return $result;
@@ -697,16 +697,16 @@ class EagerLoader
     {
         $map = [];
 
-        if (!$this->getMatching() && !$this->getContain() && $this->_joinsMap === []) {
+        if (!$this->getMatching() && !$this->getContain() && $this->joinsMap === []) {
             return $map;
         }
 
-        assert($this->_matching !== null, 'EagerLoader not available');
+        assert($this->matching !== null, 'EagerLoader not available');
 
-        $map = $this->buildAssociationsMap($map, $this->_matching->normalized($table), true);
+        $map = $this->buildAssociationsMap($map, $this->matching->normalized($table), true);
         $map = $this->buildAssociationsMap($map, $this->normalized($table));
 
-        return $this->buildAssociationsMap($map, $this->_joinsMap);
+        return $this->buildAssociationsMap($map, $this->joinsMap);
     }
 
     /**
@@ -762,7 +762,7 @@ class EagerLoader
         bool $asMatching = false,
         ?string $targetProperty = null,
     ): void {
-        $this->_joinsMap[$alias] = new EagerLoadable($alias, [
+        $this->joinsMap[$alias] = new EagerLoadable($alias, [
             'aliasPath' => $alias,
             'instance' => $assoc,
             'canBeJoined' => true,
@@ -858,8 +858,8 @@ class EagerLoader
      */
     public function __clone()
     {
-        if ($this->_matching) {
-            $this->_matching = clone $this->_matching;
+        if ($this->matching) {
+            $this->matching = clone $this->matching;
         }
     }
 }

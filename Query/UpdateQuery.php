@@ -45,7 +45,7 @@ class UpdateQuery extends DbUpdateQuery
      */
     public function sql(?ValueBinder $binder = null): string
     {
-        if (empty($this->_parts['update'])) {
+        if (empty($this->parts['update'])) {
             $repository = $this->getRepository();
             $this->update($repository->getTable());
         }

@@ -98,28 +98,28 @@ abstract class Association
      *
      * @var string
      */
-    protected string $_name;
+    protected string $name;
 
     /**
      * The class name of the target table object
      *
      * @var string
      */
-    protected string $_className;
+    protected string $className;
 
     /**
      * The field name in the owning side table that is used to match with the foreignKey
      *
      * @var array<string>|string
      */
-    protected array|string $_bindingKey;
+    protected array|string $bindingKey;
 
     /**
      * The name of the field representing the foreign key to the table to load
      *
      * @var array<string>|string|false
      */
-    protected array|string|false $_foreignKey;
+    protected array|string|false $foreignKey;
 
     /**
      * A list of conditions to be always included when fetching records from
@@ -127,7 +127,7 @@ abstract class Association
      *
      * @var \Closure|array
      */
-    protected Closure|array $_conditions = [];
+    protected Closure|array $conditions = [];
 
     /**
      * Whether the records on the target table are dependent on the source table,
@@ -136,35 +136,35 @@ abstract class Association
      *
      * @var bool
      */
-    protected bool $_dependent = false;
+    protected bool $dependent = false;
 
     /**
      * Whether cascaded deletes should also fire callbacks.
      *
      * @var bool
      */
-    protected bool $_cascadeCallbacks = false;
+    protected bool $cascadeCallbacks = false;
 
     /**
      * Source table instance
      *
      * @var \Cake\ORM\Table
      */
-    protected Table $_sourceTable;
+    protected Table $sourceTable;
 
     /**
      * Target table instance
      *
      * @var \Cake\ORM\Table
      */
-    protected Table $_targetTable;
+    protected Table $targetTable;
 
     /**
      * The type of join to be used when adding the association to a query
      *
      * @var string
      */
-    protected string $_joinType = SelectQuery::JOIN_TYPE_LEFT;
+    protected string $joinType = SelectQuery::JOIN_TYPE_LEFT;
 
     /**
      * The property name that should be filled with data from the target table
@@ -172,7 +172,7 @@ abstract class Association
      *
      * @var string
      */
-    protected string $_propertyName;
+    protected string $propertyName;
 
     /**
      * The strategy name to be used to fetch associated records. Some association
@@ -180,7 +180,7 @@ abstract class Association
      *
      * @var string
      */
-    protected string $_strategy = self::STRATEGY_JOIN;
+    protected string $strategy = self::STRATEGY_JOIN;
 
     /**
      * The default finder name to use for fetching rows from the target table
@@ -188,14 +188,14 @@ abstract class Association
      *
      * @var array|string
      */
-    protected array|string $_finder = 'all';
+    protected array|string $finder = 'all';
 
     /**
      * Valid strategies for this association. Subclasses can narrow this down.
      *
      * @var array<string>
      */
-    protected array $_validStrategies = [
+    protected array $validStrategies = [
         self::STRATEGY_JOIN,
         self::STRATEGY_SELECT,
         self::STRATEGY_SUBQUERY,
@@ -211,7 +211,7 @@ abstract class Association
      */
     public function __construct(string $alias, Table $sourceTable, array $options = [])
     {
-        $this->_sourceTable = $sourceTable;
+        $this->sourceTable = $sourceTable;
 
         $defaults = [
             'cascadeCallbacks',
@@ -227,7 +227,7 @@ abstract class Association
         ];
         foreach ($defaults as $property) {
             if (isset($options[$property])) {
-                $this->{'_' . $property} = $options[$property];
+                $this->{$property} = $options[$property];
             }
         }
 
@@ -235,10 +235,10 @@ abstract class Association
             $this->setProperty($options['propertyName']);
         }
 
-        $this->_className ??= $alias;
+        $this->className ??= $alias;
 
         [, $name] = pluginSplit($alias);
-        $this->_name = $name;
+        $this->name = $name;
 
         $this->options($options);
 
@@ -255,7 +255,7 @@ abstract class Association
      */
     public function getName(): string
     {
-        return $this->_name;
+        return $this->name;
     }
 
     /**
@@ -266,7 +266,7 @@ abstract class Association
      */
     public function setCascadeCallbacks(bool $cascadeCallbacks): static
     {
-        $this->_cascadeCallbacks = $cascadeCallbacks;
+        $this->cascadeCallbacks = $cascadeCallbacks;
 
         return $this;
     }
@@ -278,7 +278,7 @@ abstract class Association
      */
     public function getCascadeCallbacks(): bool
     {
-        return $this->_cascadeCallbacks;
+        return $this->cascadeCallbacks;
     }
 
     /**
@@ -292,17 +292,17 @@ abstract class Association
     public function setClassName(string $className): static
     {
         if (
-            isset($this->_targetTable) &&
-            get_class($this->_targetTable) !== App::className($className, 'Model/Table', 'Table')
+            isset($this->targetTable) &&
+            get_class($this->targetTable) !== App::className($className, 'Model/Table', 'Table')
         ) {
             throw new InvalidArgumentException(sprintf(
                 "The class name `%s` doesn't match the target table class name of `%s`.",
                 $className,
-                $this->_targetTable::class,
+                $this->targetTable::class,
             ));
         }
 
-        $this->_className = $className;
+        $this->className = $className;
 
         return $this;
     }
@@ -314,7 +314,7 @@ abstract class Association
      */
     public function getClassName(): string
     {
-        return $this->_className;
+        return $this->className;
     }
 
     /**
@@ -325,7 +325,7 @@ abstract class Association
      */
     public function setSource(Table $table): static
     {
-        $this->_sourceTable = $table;
+        $this->sourceTable = $table;
 
         return $this;
     }
@@ -337,7 +337,7 @@ abstract class Association
      */
     public function getSource(): Table
     {
-        return $this->_sourceTable;
+        return $this->sourceTable;
     }
 
     /**
@@ -348,7 +348,7 @@ abstract class Association
      */
     public function setTarget(Table $table): static
     {
-        $this->_targetTable = $table;
+        $this->targetTable = $table;
 
         return $this;
     }
@@ -360,12 +360,12 @@ abstract class Association
      */
     public function getTarget(): Table
     {
-        if (!isset($this->_targetTable)) {
-            if (str_contains($this->_className, '.')) {
-                [$plugin] = pluginSplit($this->_className, true);
-                $registryAlias = $plugin . $this->_name;
+        if (!isset($this->targetTable)) {
+            if (str_contains($this->className, '.')) {
+                [$plugin] = pluginSplit($this->className, true);
+                $registryAlias = $plugin . $this->name;
             } else {
-                $registryAlias = $this->_name;
+                $registryAlias = $this->name;
             }
 
             $tableLocator = $this->getTableLocator();
@@ -373,31 +373,31 @@ abstract class Association
             $config = [];
             $exists = $tableLocator->exists($registryAlias);
             if (!$exists) {
-                $config = ['className' => $this->_className];
+                $config = ['className' => $this->className];
             }
-            $this->_targetTable = $tableLocator->get($registryAlias, $config);
+            $this->targetTable = $tableLocator->get($registryAlias, $config);
 
             if ($exists) {
-                $className = App::className($this->_className, 'Model/Table', 'Table') ?: Table::class;
+                $className = App::className($this->className, 'Model/Table', 'Table') ?: Table::class;
 
-                if (!$this->_targetTable instanceof $className) {
+                if (!$this->targetTable instanceof $className) {
                     $msg = "`%s` association `%s` of type `%s` to `%s` doesn't match the expected class `%s`. ";
                     $msg .= "You can't have an association of the same name with a different target ";
                     $msg .= '"className" option anywhere in your app.';
 
                     throw new DatabaseException(sprintf(
                         $msg,
-                        $this->_sourceTable::class,
+                        $this->sourceTable::class,
                         $this->getName(),
                         $this->type(),
-                        $this->_targetTable::class,
+                        $this->targetTable::class,
                         $className,
                     ));
                 }
             }
         }
 
-        return $this->_targetTable;
+        return $this->targetTable;
     }
 
     /**
@@ -410,7 +410,7 @@ abstract class Association
      */
     public function setConditions(Closure|array $conditions): static
     {
-        $this->_conditions = $conditions;
+        $this->conditions = $conditions;
 
         return $this;
     }
@@ -424,7 +424,7 @@ abstract class Association
      */
     public function getConditions(): Closure|array
     {
-        return $this->_conditions;
+        return $this->conditions;
     }
 
     /**
@@ -436,7 +436,7 @@ abstract class Association
      */
     public function setBindingKey(array|string $key): static
     {
-        $this->_bindingKey = $key;
+        $this->bindingKey = $key;
 
         return $this;
     }
@@ -449,13 +449,13 @@ abstract class Association
      */
     public function getBindingKey(): array|string
     {
-        if (!isset($this->_bindingKey)) {
-            $this->_bindingKey = $this->isOwningSide($this->getSource()) ?
+        if (!isset($this->bindingKey)) {
+            $this->bindingKey = $this->isOwningSide($this->getSource()) ?
                 $this->getSource()->getPrimaryKey() :
                 $this->getTarget()->getPrimaryKey();
         }
 
-        return $this->_bindingKey;
+        return $this->bindingKey;
     }
 
     /**
@@ -465,7 +465,7 @@ abstract class Association
      */
     public function getForeignKey(): array|string|false
     {
-        return $this->_foreignKey;
+        return $this->foreignKey;
     }
 
     /**
@@ -476,7 +476,7 @@ abstract class Association
      */
     public function setForeignKey(array|string $key): static
     {
-        $this->_foreignKey = $key;
+        $this->foreignKey = $key;
 
         return $this;
     }
@@ -494,7 +494,7 @@ abstract class Association
      */
     public function setDependent(bool $dependent): static
     {
-        $this->_dependent = $dependent;
+        $this->dependent = $dependent;
 
         return $this;
     }
@@ -509,7 +509,7 @@ abstract class Association
      */
     public function getDependent(): bool
     {
-        return $this->_dependent;
+        return $this->dependent;
     }
 
     /**
@@ -533,7 +533,7 @@ abstract class Association
      */
     public function setJoinType(string $type): static
     {
-        $this->_joinType = $type;
+        $this->joinType = $type;
 
         return $this;
     }
@@ -545,7 +545,7 @@ abstract class Association
      */
     public function getJoinType(): string
     {
-        return $this->_joinType;
+        return $this->joinType;
     }
 
     /**
@@ -557,14 +557,14 @@ abstract class Association
      */
     public function setProperty(string $name): static
     {
-        $this->_propertyName = $name;
+        $this->propertyName = $name;
 
         try {
-            if (in_array($this->_propertyName, $this->_sourceTable->getSchema()->columns(), true)) {
+            if (in_array($this->propertyName, $this->sourceTable->getSchema()->columns(), true)) {
                 $msg = 'Association property name `%s` clashes with field of same name of table `%s`.' .
                     ' You should specify an alterate name using the `propertyName` option or `setProperty()` method.';
                 trigger_error(
-                    sprintf($msg, $this->_propertyName, $this->_sourceTable->getTable()),
+                    sprintf($msg, $this->propertyName, $this->sourceTable->getTable()),
                     E_USER_WARNING,
                 );
             }
@@ -583,11 +583,11 @@ abstract class Association
      */
     public function getProperty(): string
     {
-        if (!isset($this->_propertyName)) {
+        if (!isset($this->propertyName)) {
             $this->setProperty($this->propertyName());
         }
 
-        return $this->_propertyName;
+        return $this->propertyName;
     }
 
     /**
@@ -597,7 +597,7 @@ abstract class Association
      */
     protected function propertyName(): string
     {
-        [, $name] = pluginSplit($this->_name);
+        [, $name] = pluginSplit($this->name);
 
         return Inflector::underscore($name);
     }
@@ -613,14 +613,14 @@ abstract class Association
      */
     public function setStrategy(string $name): static
     {
-        if (!in_array($name, $this->_validStrategies, true)) {
+        if (!in_array($name, $this->validStrategies, true)) {
             throw new InvalidArgumentException(sprintf(
                 'Invalid strategy `%s` was provided. Valid options are `(%s)`.',
                 $name,
-                implode(', ', $this->_validStrategies),
+                implode(', ', $this->validStrategies),
             ));
         }
-        $this->_strategy = $name;
+        $this->strategy = $name;
 
         return $this;
     }
@@ -634,7 +634,7 @@ abstract class Association
      */
     public function getStrategy(): string
     {
-        return $this->_strategy;
+        return $this->strategy;
     }
 
     /**
@@ -644,7 +644,7 @@ abstract class Association
      */
     public function getFinder(): array|string
     {
-        return $this->_finder;
+        return $this->finder;
     }
 
     /**
@@ -655,7 +655,7 @@ abstract class Association
      */
     public function setFinder(array|string $finder): static
     {
-        $this->_finder = $finder;
+        $this->finder = $finder;
 
         return $this;
     }
@@ -742,7 +742,7 @@ abstract class Association
 
         if (
             !empty($options['matching']) &&
-            $this->_strategy === static::STRATEGY_JOIN &&
+            $this->strategy === static::STRATEGY_JOIN &&
             $dummy->getContain()
         ) {
             throw new DatabaseException(sprintf(
@@ -754,7 +754,7 @@ abstract class Association
         $dummy->where($options['conditions']);
         $this->dispatchBeforeFind($dummy);
 
-        $query->join([$this->_name => [
+        $query->join([$this->name => [
             'table' => $options['table'],
             'conditions' => $dummy->clause('where'),
             'type' => $options['joinType'],
@@ -778,7 +778,7 @@ abstract class Association
     {
         $target = $this->getTarget();
         if (!empty($options['negateMatch'])) {
-            $primaryKey = $query->aliasFields((array)$target->getPrimaryKey(), $this->_name);
+            $primaryKey = $query->aliasFields((array)$target->getPrimaryKey(), $this->name);
             $query->andWhere(function ($exp) use ($primaryKey) {
                 /** @var callable $callable */
                 $callable = [$exp, 'isNull'];
@@ -805,7 +805,7 @@ abstract class Association
     public function transformRow(array $row, string $nestKey, bool $joined, ?string $targetProperty = null): array
     {
         $sourceAlias = $this->getSource()->getAlias();
-        $nestKey = $nestKey ?: $this->_name;
+        $nestKey = $nestKey ?: $this->name;
         $targetProperty = $targetProperty ?: $this->getProperty();
         if (isset($row[$sourceAlias])) {
             $row[$sourceAlias][$targetProperty] = $row[$nestKey];
@@ -982,7 +982,7 @@ abstract class Association
             }
         }
 
-        $query->select($query->aliasFields($fields, $this->_name));
+        $query->select($query->aliasFields($fields, $this->name));
         $query->addDefaultTypes($this->getTarget());
     }
 
@@ -1100,7 +1100,7 @@ abstract class Association
     protected function joinCondition(array $options): array
     {
         $conditions = [];
-        $tAlias = $this->_name;
+        $tAlias = $this->name;
         $sAlias = $this->getSource()->getAlias();
         $foreignKey = (array)$options['foreignKey'];
         $bindingKey = (array)$this->getBindingKey();
@@ -1118,7 +1118,7 @@ abstract class Association
             $msg = 'Cannot match provided foreignKey for `%s`, got `(%s)` but expected foreign key for `(%s)`';
             throw new DatabaseException(sprintf(
                 $msg,
-                $this->_name,
+                $this->name,
                 implode(', ', $foreignKey),
                 implode(', ', $bindingKey),
             ));

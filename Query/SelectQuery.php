@@ -78,7 +78,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @var bool|null
      */
-    protected ?bool $_hasFields = null;
+    protected ?bool $hasFields = null;
 
     /**
      * Tracks whether the original query should include
@@ -86,14 +86,14 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @var bool|null
      */
-    protected ?bool $_autoFields = null;
+    protected ?bool $autoFields = null;
 
     /**
      * Whether to hydrate results into entity objects
      *
      * @var bool
      */
-    protected bool $_hydrate = true;
+    protected bool $hydrate = true;
 
     /**
      * Whether aliases are generated for fields.
@@ -108,7 +108,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @var \Closure|null
      */
-    protected ?Closure $_counter = null;
+    protected ?Closure $counter = null;
 
     /**
      * Instance of a class responsible for storing association containments and
@@ -116,21 +116,21 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @var \Cake\ORM\EagerLoader|null
      */
-    protected ?EagerLoader $_eagerLoader = null;
+    protected ?EagerLoader $eagerLoader = null;
 
     /**
      * Whether the query is standalone or the product of an eager load operation.
      *
      * @var bool
      */
-    protected bool $_eagerLoaded = false;
+    protected bool $eagerLoaded = false;
 
     /**
      * True if the beforeFind event has already been triggered for this query
      *
      * @var bool
      */
-    protected bool $_beforeFindFired = false;
+    protected bool $beforeFindFired = false;
 
     /**
      * The COUNT(*) for the query.
@@ -139,7 +139,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @var int|null
      */
-    protected ?int $_resultsCount = null;
+    protected ?int $resultsCount = null;
 
     /**
      * Result set factory
@@ -156,7 +156,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @var iterable|null
      * @see \Cake\Datasource\QueryTrait::setResult()
      */
-    protected ?iterable $_results = null;
+    protected ?iterable $results = null;
 
     /**
      * List of map-reduce routines that should be applied over the query
@@ -164,7 +164,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @var array
      */
-    protected array $_mapReduce = [];
+    protected array $mapReduce = [];
 
     /**
      * List of formatter classes or callbacks that will post-process the
@@ -172,14 +172,14 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @var array<\Closure>
      */
-    protected array $_formatters = [];
+    protected array $formatters = [];
 
     /**
      * A query cacher instance if this query has caching enabled.
      *
      * @var \Cake\Datasource\QueryCacher|null
      */
-    protected ?QueryCacher $_cache = null;
+    protected ?QueryCacher $cache = null;
 
     /**
      * Holds any custom options passed using applyOptions that could not be processed
@@ -187,7 +187,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @var array
      */
-    protected array $_options = [];
+    protected array $options = [];
 
     /**
      * Constructor
@@ -216,7 +216,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function setResult(iterable $results): static
     {
-        $this->_results = $results;
+        $this->results = $results;
 
         return $this;
     }
@@ -273,12 +273,12 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     public function cache(Closure|string|false $key, CacheInterface|string $config = 'default'): static
     {
         if ($key === false) {
-            $this->_cache = null;
+            $this->cache = null;
 
             return $this;
         }
 
-        $this->_cache = new QueryCacher($key, $config);
+        $this->cache = new QueryCacher($key, $config);
 
         return $this;
     }
@@ -290,7 +290,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function isEagerLoaded(): bool
     {
-        return $this->_eagerLoaded;
+        return $this->eagerLoaded;
     }
 
     /**
@@ -302,7 +302,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function eagerLoaded(bool $value): static
     {
-        $this->_eagerLoaded = $value;
+        $this->eagerLoaded = $value;
 
         return $this;
     }
@@ -369,20 +369,20 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function all(): ResultSetInterface
     {
-        if ($this->_results !== null) {
-            if (!($this->_results instanceof ResultSetInterface)) {
-                $this->_results = $this->ormDecorateResults($this->_results);
+        if ($this->results !== null) {
+            if (!($this->results instanceof ResultSetInterface)) {
+                $this->results = $this->ormDecorateResults($this->results);
             }
 
-            return $this->_results;
+            return $this->results;
         }
 
-        $results = $this->_cache?->fetch($this);
+        $results = $this->cache?->fetch($this);
         if ($results === null) {
             $results = $this->ormDecorateResults($this->ormExecute());
-            $this->_cache?->store($this, $results);
+            $this->cache?->store($this, $results);
         }
-        $this->_results = $results;
+        $this->results = $results;
 
         return $results;
     }
@@ -415,7 +415,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     public function mapReduce(?Closure $mapper = null, ?Closure $reducer = null, bool $overwrite = false): static
     {
         if ($overwrite) {
-            $this->_mapReduce = [];
+            $this->mapReduce = [];
         }
         if ($mapper === null) {
             if (!$overwrite) {
@@ -424,7 +424,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
 
             return $this;
         }
-        $this->_mapReduce[] = compact('mapper', 'reducer');
+        $this->mapReduce[] = compact('mapper', 'reducer');
 
         return $this;
     }
@@ -436,7 +436,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function getMapReducers(): array
     {
-        return $this->_mapReduce;
+        return $this->mapReduce;
     }
 
     /**
@@ -534,7 +534,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     public function formatResults(?Closure $formatter = null, int|bool $mode = self::APPEND): static
     {
         if ($mode === self::OVERWRITE) {
-            $this->_formatters = [];
+            $this->formatters = [];
         }
         if ($formatter === null) {
             if ($mode !== self::OVERWRITE) {
@@ -545,12 +545,12 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         }
 
         if ($mode === self::PREPEND) {
-            array_unshift($this->_formatters, $formatter);
+            array_unshift($this->formatters, $formatter);
 
             return $this;
         }
 
-        $this->_formatters[] = $formatter;
+        $this->formatters[] = $formatter;
 
         return $this;
     }
@@ -562,7 +562,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function getResultFormatters(): array
     {
-        return $this->_formatters;
+        return $this->formatters;
     }
 
     /**
@@ -579,7 +579,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function first(): mixed
     {
-        if ($this->_dirty) {
+        if ($this->dirty) {
             $this->limit(1);
         }
 
@@ -624,7 +624,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function getOptions(): array
     {
-        return $this->_options;
+        return $this->options;
     }
 
     /**
@@ -714,7 +714,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             if (isset($valid[$option], $values)) {
                 $this->{$valid[$option]}($values);
             } else {
-                $this->_options[$option] = $values;
+                $this->options[$option] = $values;
             }
         }
 
@@ -731,8 +731,8 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     {
         $resultSetClass = $this->resultSetFactory()->getResultSetClass();
 
-        if ($this->_mapReduce) {
-            foreach ($this->_mapReduce as $functions) {
+        if ($this->mapReduce) {
+            foreach ($this->mapReduce as $functions) {
                 $result = new MapReduce($result, $functions['mapper'], $functions['reducer']);
             }
             $result = new $resultSetClass($result);
@@ -742,8 +742,8 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             $result = new $resultSetClass($result);
         }
 
-        if ($this->_formatters) {
-            foreach ($this->_formatters as $formatter) {
+        if ($this->formatters) {
+            foreach ($this->formatters as $formatter) {
                 $result = $formatter($result, $this);
             }
 
@@ -828,7 +828,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         ExpressionInterface|Table|Association|Closure|array|string|float|int $fields,
     ): static {
         $this->select($fields);
-        $this->_autoFields = true;
+        $this->autoFields = true;
 
         return $this;
     }
@@ -868,7 +868,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function setEagerLoader(EagerLoader $instance): static
     {
-        $this->_eagerLoader = $instance;
+        $this->eagerLoader = $instance;
 
         return $this;
     }
@@ -880,7 +880,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function getEagerLoader(): EagerLoader
     {
-        return $this->_eagerLoader ??= new EagerLoader();
+        return $this->eagerLoader ??= new EagerLoader();
     }
 
     /**
@@ -1376,8 +1376,8 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     public function __clone()
     {
         parent::__clone();
-        if ($this->_eagerLoader !== null) {
-            $this->_eagerLoader = clone $this->_eagerLoader;
+        if ($this->eagerLoader !== null) {
+            $this->eagerLoader = clone $this->eagerLoader;
         }
     }
 
@@ -1392,7 +1392,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function count(): int
     {
-        return $this->_resultsCount ??= $this->performCount();
+        return $this->resultsCount ??= $this->performCount();
     }
 
     /**
@@ -1403,7 +1403,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     protected function performCount(): int
     {
         $query = $this->cleanCopy();
-        $counter = $this->_counter;
+        $counter = $this->counter;
         if ($counter !== null) {
             $query->counter(null);
 
@@ -1428,7 +1428,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             }
         }
 
-        if (!$complex && $this->_valueBinder !== null) {
+        if (!$complex && $this->valueBinder !== null) {
             $order = $this->clause('order');
             assert($order === null || $order instanceof QueryExpression);
             $complex = $order === null ? false : $order->hasNestedExpression();
@@ -1474,7 +1474,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function counter(?Closure $counter): static
     {
-        $this->_counter = $counter;
+        $this->counter = $counter;
 
         return $this;
     }
@@ -1490,7 +1490,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     public function enableHydration(bool $enable = true): static
     {
         $this->dirty();
-        $this->_hydrate = $enable;
+        $this->hydrate = $enable;
 
         return $this;
     }
@@ -1506,7 +1506,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     public function disableHydration(): static
     {
         $this->dirty();
-        $this->_hydrate = false;
+        $this->hydrate = false;
 
         return $this;
     }
@@ -1518,7 +1518,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function isHydrationEnabled(): bool
     {
-        return $this->_hydrate;
+        return $this->hydrate;
     }
 
     /**
@@ -1530,13 +1530,13 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function triggerBeforeFind(): void
     {
-        if (!$this->_beforeFindFired) {
-            $this->_beforeFindFired = true;
+        if (!$this->beforeFindFired) {
+            $this->beforeFindFired = true;
 
             $repository = $this->getRepository();
             $repository->dispatchEvent('Model.beforeFind', [
                 $this,
-                new ArrayObject($this->_options),
+                new ArrayObject($this->options),
                 !$this->isEagerLoaded(),
             ]);
         }
@@ -1562,8 +1562,8 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     protected function ormExecute(): iterable
     {
         $this->triggerBeforeFind();
-        if ($this->_results !== null) {
-            return $this->_results;
+        if ($this->results !== null) {
+            return $this->results;
         }
 
         if ($this->bufferedResults) {
@@ -1600,17 +1600,17 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     protected function transformQuery(): void
     {
-        if (!$this->_dirty) {
+        if (!$this->dirty) {
             return;
         }
 
         $repository = $this->getRepository();
 
-        if (empty($this->_parts['from'])) {
+        if (empty($this->parts['from'])) {
             $this->from([$repository->getAlias() => $repository->getTable()]);
         }
         $this->addDefaultFields();
-        $this->getEagerLoader()->attachAssociations($this, $repository, !$this->_hasFields);
+        $this->getEagerLoader()->attachAssociations($this, $repository, !$this->hasFields);
         $this->addDefaultSelectTypes();
     }
 
@@ -1623,12 +1623,12 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     protected function addDefaultFields(): void
     {
         $select = $this->clause('select');
-        $this->_hasFields = true;
+        $this->hasFields = true;
 
         $repository = $this->getRepository();
 
-        if (!count($select) || $this->_autoFields === true) {
-            $this->_hasFields = false;
+        if (!count($select) || $this->autoFields === true) {
+            $this->hasFields = false;
             $this->select($repository->getSchema()->columns());
             $select = $this->clause('select');
         }
@@ -1700,8 +1700,8 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     protected function dirty(): void
     {
-        $this->_results = null;
-        $this->_resultsCount = null;
+        $this->results = null;
+        $this->resultsCount = null;
         parent::dirty();
     }
 
@@ -1713,13 +1713,13 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         $eagerLoader = $this->getEagerLoader();
 
         return parent::__debugInfo() + [
-            'hydrate' => $this->_hydrate,
-            'formatters' => count($this->_formatters),
-            'mapReducers' => count($this->_mapReduce),
+            'hydrate' => $this->hydrate,
+            'formatters' => count($this->formatters),
+            'mapReducers' => count($this->mapReduce),
             'contain' => $eagerLoader->getContain(),
             'matching' => $eagerLoader->getMatching(),
-            'extraOptions' => $this->_options,
-            'repository' => $this->_repository,
+            'extraOptions' => $this->options,
+            'repository' => $this->repository,
         ];
     }
 
@@ -1746,7 +1746,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function enableAutoFields(bool $value = true): static
     {
-        $this->_autoFields = $value;
+        $this->autoFields = $value;
 
         return $this;
     }
@@ -1758,7 +1758,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function disableAutoFields(): static
     {
-        $this->_autoFields = false;
+        $this->autoFields = false;
 
         return $this;
     }
@@ -1773,7 +1773,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function isAutoFieldsEnabled(): ?bool
     {
-        return $this->_autoFields;
+        return $this->autoFields;
     }
 }
 

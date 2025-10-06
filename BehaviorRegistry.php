@@ -46,14 +46,14 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      *
      * @var \Cake\ORM\Table
      */
-    protected Table $_table;
+    protected Table $table;
 
     /**
      * Finder method mappings.
      *
      * @var array<string, array>
      */
-    protected array $_finderMap = [];
+    protected array $finderMap = [];
 
     /**
      * Constructor
@@ -75,7 +75,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      */
     public function setTable(Table $table): void
     {
-        $this->_table = $table;
+        $this->table = $table;
         $this->setEventManager($table->getEventManager());
     }
 
@@ -142,13 +142,13 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
             return $class;
         }
 
-        $instance = new $class($this->_table, $config);
+        $instance = new $class($this->table, $config);
 
         $enable = $config['enabled'] ?? true;
         if ($enable) {
             $this->getEventManager()->on($instance);
         }
-        $this->_finderMap += $this->getFinderMethods($instance, $class, $alias);
+        $this->finderMap += $this->getFinderMethods($instance, $class, $alias);
 
         return $instance;
     }
@@ -167,8 +167,8 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         $finders = array_change_key_case($instance->implementedFinders());
 
         foreach ($finders as $finder => $methodName) {
-            if (isset($this->_finderMap[$finder]) && $this->has($this->_finderMap[$finder][0])) {
-                $duplicate = $this->_finderMap[$finder];
+            if (isset($this->finderMap[$finder]) && $this->has($this->finderMap[$finder][0])) {
+                $duplicate = $this->finderMap[$finder];
                 $error = sprintf(
                     '`%s` contains duplicate finder `%s` which is already provided by `%s`.',
                     $class,
@@ -194,7 +194,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     {
         parent::set($name, $object);
 
-        $this->_finderMap += $this->getFinderMethods($object, $object::class, $name);
+        $this->finderMap += $this->getFinderMethods($object, $object::class, $name);
 
         return $this;
     }
@@ -214,7 +214,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
 
         $finders = array_map('strtolower', array_keys($instance->implementedFinders()));
         foreach ($finders as $finder) {
-            unset($this->_finderMap[$finder]);
+            unset($this->finderMap[$finder]);
         }
 
         return $result;
@@ -233,7 +233,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     {
         $method = strtolower($method);
 
-        return isset($this->_finderMap[$method]);
+        return isset($this->finderMap[$method]);
     }
 
     /**
@@ -249,7 +249,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         $type = strtolower($type);
 
         if ($this->hasFinder($type)) {
-            [$behavior, $callMethod] = $this->_finderMap[$type];
+            [$behavior, $callMethod] = $this->finderMap[$type];
 
             return $this->loaded[$behavior]->$callMethod(...);
         }
@@ -258,7 +258,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
             sprintf(
                 'Finder `%s` not found on any behavior attached to `%s`.',
                 $type,
-                $this->_table::class,
+                $this->table::class,
             ),
         );
     }
