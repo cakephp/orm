@@ -45,7 +45,7 @@ class DeleteQuery extends DbDeleteQuery
      */
     public function sql(?ValueBinder $binder = null): string
     {
-        if (empty($this->_parts['from'])) {
+        if (empty($this->parts['from'])) {
             $repository = $this->getRepository();
             $this->from([$repository->getAlias() => $repository->getTable()]);
         }

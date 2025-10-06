@@ -46,7 +46,7 @@ class Marshaller
      *
      * @var \Cake\ORM\Table
      */
-    protected Table $_table;
+    protected Table $table;
 
     /**
      * Constructor.
@@ -55,7 +55,7 @@ class Marshaller
      */
     public function __construct(Table $table)
     {
-        $this->_table = $table;
+        $this->table = $table;
     }
 
     /**
@@ -69,7 +69,7 @@ class Marshaller
     protected function buildPropertyMap(array $data, array $options): array
     {
         $map = [];
-        $schema = $this->_table->getSchema();
+        $schema = $this->table->getSchema();
 
         // Is a concrete column?
         foreach (array_keys($data) as $prop) {
@@ -92,7 +92,7 @@ class Marshaller
             $stringifiedKey = (string)$key;
             // If the key is not a special field like _ids or _joinData
             // it is a missing association that we should error on.
-            if (!$this->_table->hasAssociation($stringifiedKey)) {
+            if (!$this->table->hasAssociation($stringifiedKey)) {
                 if (
                     !str_starts_with($stringifiedKey, '_')
                     && (!isset($options['junctionProperty']) || $options['junctionProperty'] !== $stringifiedKey)
@@ -100,12 +100,12 @@ class Marshaller
                     throw new InvalidArgumentException(sprintf(
                         'Cannot marshal data for `%s` association. It is not associated with `%s`.',
                         $stringifiedKey,
-                        $this->_table->getAlias(),
+                        $this->table->getAlias(),
                     ));
                 }
                 continue;
             }
-            $assoc = $this->_table->getAssociation($stringifiedKey);
+            $assoc = $this->table->getAssociation($stringifiedKey);
 
             if (isset($options['forceNew'])) {
                 $nested['forceNew'] = $options['forceNew'];
@@ -137,7 +137,7 @@ class Marshaller
             $map[$assoc->getProperty()] = $callback;
         }
 
-        $behaviors = $this->_table->behaviors();
+        $behaviors = $this->table->behaviors();
         foreach ($behaviors->loaded() as $name) {
             $behavior = $behaviors->get($name);
             if ($behavior instanceof PropertyMarshalInterface) {
@@ -201,8 +201,8 @@ class Marshaller
     {
         [$data, $options] = $this->prepareDataAndOptions($data, $options);
 
-        $primaryKey = (array)$this->_table->getPrimaryKey();
-        $entity = $this->_table->newEmptyEntity();
+        $primaryKey = (array)$this->table->getPrimaryKey();
+        $entity = $this->table->newEmptyEntity();
 
         if (isset($options['patchableFields'])) {
             foreach ((array)$options['patchableFields'] as $key => $value) {
@@ -286,7 +286,7 @@ class Marshaller
             $validator = null;
         }
 
-        return $this->_table->getValidator($validator)->validate($data, $isNew, $context);
+        return $this->table->getValidator($validator)->validate($data, $isNew, $context);
     }
 
     /**
@@ -300,7 +300,7 @@ class Marshaller
     {
         $options += ['validate' => true, 'fields' => null, 'strictFields' => false];
 
-        $tableName = $this->_table->getAlias();
+        $tableName = $this->table->getAlias();
         if (isset($data[$tableName]) && is_array($data[$tableName])) {
             $data += $data[$tableName];
             unset($data[$tableName]);
@@ -308,7 +308,7 @@ class Marshaller
 
         $data = new ArrayObject($data);
         $options = new ArrayObject($options);
-        $this->_table->dispatchEvent('Model.beforeMarshal', compact('data', 'options'));
+        $this->table->dispatchEvent('Model.beforeMarshal', compact('data', 'options'));
 
         return [(array)$data, (array)$options];
     }
@@ -578,7 +578,7 @@ class Marshaller
         $keys = [];
 
         if (!$isNew) {
-            $keys = $entity->extract((array)$this->_table->getPrimaryKey());
+            $keys = $entity->extract((array)$this->table->getPrimaryKey());
         }
 
         if (isset($options['patchableFields'])) {
@@ -675,7 +675,7 @@ class Marshaller
      */
     public function mergeMany(iterable $entities, array $data, array $options = []): array
     {
-        $primary = (array)$this->_table->getPrimaryKey();
+        $primary = (array)$this->table->getPrimaryKey();
 
         $indexed = new Collection($data)
             ->groupBy(function ($el) use ($primary) {
@@ -715,12 +715,12 @@ class Marshaller
             })
             ->filter(fn($keys) => count(Hash::filter($keys)) === count($primary))
             ->reduce(function ($conditions, $keys) use ($primary) {
-                $fields = array_map($this->_table->aliasField(...), $primary);
+                $fields = array_map($this->table->aliasField(...), $primary);
                 $conditions['OR'][] = array_combine($fields, $keys);
 
                 return $conditions;
             }, ['OR' => []]);
-        $maybeExistentQuery = $this->_table->find()->where($conditions);
+        $maybeExistentQuery = $this->table->find()->where($conditions);
 
         if ($indexed && count($maybeExistentQuery->clause('where'))) {
             /** @var \Traversable<\Cake\Datasource\EntityInterface> $existent */
@@ -903,7 +903,7 @@ class Marshaller
     {
         $data = new ArrayObject($data);
         $options = new ArrayObject($options);
-        $this->_table->dispatchEvent('Model.afterMarshal', compact('entity', 'data', 'options'));
+        $this->table->dispatchEvent('Model.afterMarshal', compact('entity', 'data', 'options'));
     }
 
     /**

@@ -33,21 +33,21 @@ class EagerLoadable
      *
      * @var string
      */
-    protected string $_name;
+    protected string $name;
 
     /**
      * A list of other associations to load from this level.
      *
      * @var array<string, \Cake\ORM\EagerLoadable>
      */
-    protected array $_associations = [];
+    protected array $associations = [];
 
     /**
      * The Association class instance to use for loading the records.
      *
      * @var \Cake\ORM\Association|null
      */
-    protected ?Association $_instance = null;
+    protected ?Association $instance = null;
 
     /**
      * A list of options to pass to the association object for loading
@@ -55,7 +55,7 @@ class EagerLoadable
      *
      * @var array<string, mixed>
      */
-    protected array $_config = [];
+    protected array $config = [];
 
     /**
      * A dotted separated string representing the path of associations
@@ -63,7 +63,7 @@ class EagerLoadable
      *
      * @var string
      */
-    protected string $_aliasPath;
+    protected string $aliasPath;
 
     /**
      * A dotted separated string representing the path of entity properties
@@ -79,14 +79,14 @@ class EagerLoadable
      *
      * @var string|null
      */
-    protected ?string $_propertyPath = null;
+    protected ?string $propertyPath = null;
 
     /**
      * Whether this level can be fetched using a join.
      *
      * @var bool
      */
-    protected bool $_canBeJoined = false;
+    protected bool $canBeJoined = false;
 
     /**
      * Whether this level was meant for a "matching" fetch
@@ -94,7 +94,7 @@ class EagerLoadable
      *
      * @var bool|null
      */
-    protected ?bool $_forMatching = null;
+    protected ?bool $forMatching = null;
 
     /**
      * The property name where the association result should be nested
@@ -110,7 +110,7 @@ class EagerLoadable
      *
      * @var string|null
      */
-    protected ?string $_targetProperty = null;
+    protected ?string $targetProperty = null;
 
     /**
      * Constructor. The $config parameter accepts the following array
@@ -132,14 +132,14 @@ class EagerLoadable
      */
     public function __construct(string $name, array $config = [])
     {
-        $this->_name = $name;
+        $this->name = $name;
         $allowed = [
             'associations', 'instance', 'config', 'canBeJoined',
             'aliasPath', 'propertyPath', 'forMatching', 'targetProperty',
         ];
         foreach ($allowed as $property) {
             if (isset($config[$property])) {
-                $this->{'_' . $property} = $config[$property];
+                $this->{$property} = $config[$property];
             }
         }
     }
@@ -153,7 +153,7 @@ class EagerLoadable
      */
     public function addAssociation(string $name, EagerLoadable $association): void
     {
-        $this->_associations[$name] = $association;
+        $this->associations[$name] = $association;
     }
 
     /**
@@ -163,7 +163,7 @@ class EagerLoadable
      */
     public function associations(): array
     {
-        return $this->_associations;
+        return $this->associations;
     }
 
     /**
@@ -174,11 +174,11 @@ class EagerLoadable
      */
     public function instance(): Association
     {
-        if ($this->_instance === null) {
+        if ($this->instance === null) {
             throw new DatabaseException('No instance set.');
         }
 
-        return $this->_instance;
+        return $this->instance;
     }
 
     /**
@@ -189,7 +189,7 @@ class EagerLoadable
      */
     public function aliasPath(): string
     {
-        return $this->_aliasPath;
+        return $this->aliasPath;
     }
 
     /**
@@ -208,7 +208,7 @@ class EagerLoadable
      */
     public function propertyPath(): ?string
     {
-        return $this->_propertyPath;
+        return $this->propertyPath;
     }
 
     /**
@@ -219,7 +219,7 @@ class EagerLoadable
      */
     public function setCanBeJoined(bool $possible): static
     {
-        $this->_canBeJoined = $possible;
+        $this->canBeJoined = $possible;
 
         return $this;
     }
@@ -231,7 +231,7 @@ class EagerLoadable
      */
     public function canBeJoined(): bool
     {
-        return $this->_canBeJoined;
+        return $this->canBeJoined;
     }
 
     /**
@@ -243,7 +243,7 @@ class EagerLoadable
      */
     public function setConfig(array $config): static
     {
-        $this->_config = $config;
+        $this->config = $config;
 
         return $this;
     }
@@ -256,7 +256,7 @@ class EagerLoadable
      */
     public function getConfig(): array
     {
-        return $this->_config;
+        return $this->config;
     }
 
     /**
@@ -267,7 +267,7 @@ class EagerLoadable
      */
     public function forMatching(): ?bool
     {
-        return $this->_forMatching;
+        return $this->forMatching;
     }
 
     /**
@@ -286,7 +286,7 @@ class EagerLoadable
      */
     public function targetProperty(): ?string
     {
-        return $this->_targetProperty;
+        return $this->targetProperty;
     }
 
     /**
@@ -298,16 +298,16 @@ class EagerLoadable
     public function asContainArray(): array
     {
         $associations = [];
-        foreach ($this->_associations as $assoc) {
+        foreach ($this->associations as $assoc) {
             $associations += $assoc->asContainArray();
         }
-        $config = $this->_config;
-        if ($this->_forMatching !== null) {
-            $config = ['matching' => $this->_forMatching] + $config;
+        $config = $this->config;
+        if ($this->forMatching !== null) {
+            $config = ['matching' => $this->forMatching] + $config;
         }
 
         return [
-            $this->_name => [
+            $this->name => [
                 'associations' => $associations,
                 'config' => $config,
             ],
@@ -321,8 +321,8 @@ class EagerLoadable
      */
     public function __clone()
     {
-        foreach ($this->_associations as $i => $association) {
-            $this->_associations[$i] = clone $association;
+        foreach ($this->associations as $i => $association) {
+            $this->associations[$i] = clone $association;
         }
     }
 }

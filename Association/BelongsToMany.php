@@ -62,28 +62,28 @@ class BelongsToMany extends Association
      *
      * @var string
      */
-    protected string $_joinType = SelectQuery::JOIN_TYPE_INNER;
+    protected string $joinType = SelectQuery::JOIN_TYPE_INNER;
 
     /**
      * The strategy name to be used to fetch associated records.
      *
      * @var string
      */
-    protected string $_strategy = self::STRATEGY_SELECT;
+    protected string $strategy = self::STRATEGY_SELECT;
 
     /**
      * Junction table instance
      *
      * @var \Cake\ORM\Table
      */
-    protected Table $_junctionTable;
+    protected Table $junctionTable;
 
     /**
      * Junction table name
      *
      * @var string
      */
-    protected string $_junctionTableName;
+    protected string $junctionTableName;
 
     /**
      * The name of the hasMany association from the target table
@@ -91,7 +91,7 @@ class BelongsToMany extends Association
      *
      * @var string
      */
-    protected string $_junctionAssociationName;
+    protected string $junctionAssociationName;
 
     /**
      * The name of the property to be set containing data from the junction table
@@ -99,35 +99,35 @@ class BelongsToMany extends Association
      *
      * @var string
      */
-    protected string $_junctionProperty = '_joinData';
+    protected string $junctionProperty = '_joinData';
 
     /**
      * Saving strategy to be used by this association
      *
      * @var string
      */
-    protected string $_saveStrategy = self::SAVE_REPLACE;
+    protected string $saveStrategy = self::SAVE_REPLACE;
 
     /**
      * The name of the field representing the foreign key to the target table
      *
      * @var array<string>|string|null
      */
-    protected array|string|null $_targetForeignKey = null;
+    protected array|string|null $targetForeignKey = null;
 
     /**
      * The table instance for the junction relation.
      *
      * @var \Cake\ORM\Table|string|null
      */
-    protected Table|string|null $_through = null;
+    protected Table|string|null $through = null;
 
     /**
      * Valid strategies for this type of association
      *
      * @var array<string>
      */
-    protected array $_validStrategies = [
+    protected array $validStrategies = [
         self::STRATEGY_SELECT,
         self::STRATEGY_SUBQUERY,
     ];
@@ -140,28 +140,28 @@ class BelongsToMany extends Association
      *
      * @var bool
      */
-    protected bool $_dependent = true;
+    protected bool $dependent = true;
 
     /**
      * Filtered conditions that reference the target table.
      *
      * @var array|null
      */
-    protected ?array $_targetConditions = null;
+    protected ?array $targetConditions = null;
 
     /**
      * Filtered conditions that reference the junction table.
      *
      * @var array|null
      */
-    protected ?array $_junctionConditions = null;
+    protected ?array $junctionConditions = null;
 
     /**
      * Order in which target records should be returned
      *
      * @var \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string|null
      */
-    protected ExpressionInterface|Closure|array|string|null $_sort = null;
+    protected ExpressionInterface|Closure|array|string|null $sort = null;
 
     /**
      * Sets the name of the field representing the foreign key to the target table.
@@ -171,7 +171,7 @@ class BelongsToMany extends Association
      */
     public function setTargetForeignKey(array|string $key): static
     {
-        $this->_targetForeignKey = $key;
+        $this->targetForeignKey = $key;
 
         return $this;
     }
@@ -183,7 +183,7 @@ class BelongsToMany extends Association
      */
     public function getTargetForeignKey(): array|string
     {
-        return $this->_targetForeignKey ??= $this->modelKey($this->getTarget()->getAlias());
+        return $this->targetForeignKey ??= $this->modelKey($this->getTarget()->getAlias());
     }
 
     /**
@@ -203,7 +203,7 @@ class BelongsToMany extends Association
      */
     public function getForeignKey(): array|string|false
     {
-        return $this->_foreignKey ??= $this->modelKey($this->getSource()->getTable());
+        return $this->foreignKey ??= $this->modelKey($this->getSource()->getTable());
     }
 
     /**
@@ -214,7 +214,7 @@ class BelongsToMany extends Association
      */
     public function setSort(ExpressionInterface|Closure|array|string $sort): static
     {
-        $this->_sort = $sort;
+        $this->sort = $sort;
 
         return $this;
     }
@@ -226,7 +226,7 @@ class BelongsToMany extends Association
      */
     public function getSort(): ExpressionInterface|Closure|array|string|null
     {
-        return $this->_sort;
+        return $this->sort;
     }
 
     /**
@@ -252,13 +252,13 @@ class BelongsToMany extends Association
      */
     public function junction(Table|string|null $table = null): Table
     {
-        if ($table === null && isset($this->_junctionTable)) {
-            return $this->_junctionTable;
+        if ($table === null && isset($this->junctionTable)) {
+            return $this->junctionTable;
         }
 
         $tableLocator = $this->getTableLocator();
-        if ($table === null && $this->_through !== null) {
-            $table = $this->_through;
+        if ($table === null && $this->through !== null) {
+            $table = $this->through;
         } elseif ($table === null) {
             $tableName = $this->junctionTableName();
             $tableAlias = Inflector::camelize($tableName);
@@ -293,7 +293,7 @@ class BelongsToMany extends Association
         $this->generateTargetAssociations($table, $source, $target);
         $this->generateJunctionAssociations($table, $source, $target);
 
-        return $this->_junctionTable = $table;
+        return $this->junctionTable = $table;
     }
 
     /**
@@ -304,7 +304,7 @@ class BelongsToMany extends Association
      */
     public function setJunctionProperty(string $junctionProperty)
     {
-        $this->_junctionProperty = $junctionProperty;
+        $this->junctionProperty = $junctionProperty;
 
         return $this;
     }
@@ -316,7 +316,7 @@ class BelongsToMany extends Association
      */
     public function getJunctionProperty(): string
     {
-        return $this->_junctionProperty;
+        return $this->junctionProperty;
     }
 
     /**
@@ -351,7 +351,7 @@ class BelongsToMany extends Association
                 'targetTable' => $junction,
                 'bindingKey' => $targetBindingKey,
                 'foreignKey' => $this->getTargetForeignKey(),
-                'strategy' => $this->_strategy,
+                'strategy' => $this->strategy,
             ]);
         }
         if (!$target->hasAssociation($sAlias)) {
@@ -362,7 +362,7 @@ class BelongsToMany extends Association
                 'targetForeignKey' => $this->getForeignKey(),
                 'through' => $junction,
                 'conditions' => $this->getConditions(),
-                'strategy' => $this->_strategy,
+                'strategy' => $this->strategy,
             ]);
         }
     }
@@ -396,7 +396,7 @@ class BelongsToMany extends Association
                 'targetTable' => $junction,
                 'bindingKey' => $sourceBindingKey,
                 'foreignKey' => $this->getForeignKey(),
-                'strategy' => $this->_strategy,
+                'strategy' => $this->strategy,
             ]);
         }
     }
@@ -579,7 +579,7 @@ class BelongsToMany extends Association
             'associationType' => $this->type(),
             'sort' => $this->getSort(),
             'junctionAssociationName' => $name,
-            'junctionProperty' => $this->_junctionProperty,
+            'junctionProperty' => $this->junctionProperty,
             'junctionAssoc' => $this->getTarget()->getAssociation($name),
             'junctionConditions' => $this->junctionConditions(),
             'finder' => function () {
@@ -614,7 +614,7 @@ class BelongsToMany extends Association
 
         $table = $this->junction();
         $hasMany = $this->getSource()->getAssociation($table->getAlias());
-        if ($this->_cascadeCallbacks) {
+        if ($this->cascadeCallbacks) {
             foreach ($hasMany->find('all')->where($conditions)->all()->toList() as $related) {
                 $success = $table->delete($related, $options);
                 if (!$success) {
@@ -663,7 +663,7 @@ class BelongsToMany extends Association
             throw new InvalidArgumentException($msg);
         }
 
-        $this->_saveStrategy = $strategy;
+        $this->saveStrategy = $strategy;
 
         return $this;
     }
@@ -675,7 +675,7 @@ class BelongsToMany extends Association
      */
     public function getSaveStrategy(): string
     {
-        return $this->_saveStrategy;
+        return $this->saveStrategy;
     }
 
     /**
@@ -747,10 +747,10 @@ class BelongsToMany extends Association
     ): EntityInterface|false {
         $joinAssociations = false;
         if (isset($options['associated']) && is_array($options['associated'])) {
-            if (!empty($options['associated'][$this->_junctionProperty]['associated'])) {
-                $joinAssociations = $options['associated'][$this->_junctionProperty]['associated'];
+            if (!empty($options['associated'][$this->junctionProperty]['associated'])) {
+                $joinAssociations = $options['associated'][$this->junctionProperty]['associated'];
             }
-            unset($options['associated'][$this->_junctionProperty]);
+            unset($options['associated'][$this->junctionProperty]);
         }
 
         $table = $this->getTarget();
@@ -819,7 +819,7 @@ class BelongsToMany extends Association
         $assocForeignKey = (array)$belongsTo->getForeignKey();
         $targetBindingKey = (array)$belongsTo->getBindingKey();
         $bindingKey = (array)$this->getBindingKey();
-        $jointProperty = $this->_junctionProperty;
+        $jointProperty = $this->junctionProperty;
         $junctionRegistryAlias = $junction->getRegistryAlias();
 
         foreach ($targetEntities as $e) {
@@ -952,7 +952,7 @@ class BelongsToMany extends Association
             function () use ($sourceEntity, $targetEntities, $options): void {
                 $links = $this->collectJointEntities($sourceEntity, $targetEntities);
                 foreach ($links as $entity) {
-                    $this->_junctionTable->delete($entity, $options);
+                    $this->junctionTable->delete($entity, $options);
                 }
             },
         );
@@ -987,8 +987,8 @@ class BelongsToMany extends Association
     public function setConditions(Closure|array $conditions): static
     {
         parent::setConditions($conditions);
-        $this->_targetConditions = null;
-        $this->_junctionConditions = null;
+        $this->targetConditions = null;
+        $this->junctionConditions = null;
 
         return $this;
     }
@@ -1001,7 +1001,7 @@ class BelongsToMany extends Association
      */
     public function setThrough(Table|string $through): static
     {
-        $this->_through = $through;
+        $this->through = $through;
 
         return $this;
     }
@@ -1014,7 +1014,7 @@ class BelongsToMany extends Association
      */
     public function getThrough(): Table|string|null
     {
-        return $this->_through;
+        return $this->through;
     }
 
     /**
@@ -1029,8 +1029,8 @@ class BelongsToMany extends Association
      */
     protected function targetConditions(): mixed
     {
-        if ($this->_targetConditions !== null) {
-            return $this->_targetConditions;
+        if ($this->targetConditions !== null) {
+            return $this->targetConditions;
         }
         $conditions = $this->getConditions();
         if (!is_array($conditions)) {
@@ -1046,7 +1046,7 @@ class BelongsToMany extends Association
             }
         }
 
-        return $this->_targetConditions = $matching;
+        return $this->targetConditions = $matching;
     }
 
     /**
@@ -1057,8 +1057,8 @@ class BelongsToMany extends Association
      */
     protected function junctionConditions(): array
     {
-        if ($this->_junctionConditions !== null) {
-            return $this->_junctionConditions;
+        if ($this->junctionConditions !== null) {
+            return $this->junctionConditions;
         }
         $matching = [];
         $conditions = $this->getConditions();
@@ -1078,7 +1078,7 @@ class BelongsToMany extends Association
             }
         }
 
-        return $this->_junctionConditions = $matching;
+        return $this->junctionConditions = $matching;
     }
 
     /**
@@ -1344,7 +1344,7 @@ class BelongsToMany extends Association
         }
 
         $primary = (array)$target->getPrimaryKey();
-        $jointProperty = $this->_junctionProperty;
+        $jointProperty = $this->junctionProperty;
         foreach ($targetEntities as $k => $entity) {
             if (!($entity instanceof EntityInterface)) {
                 continue;
@@ -1411,7 +1411,7 @@ class BelongsToMany extends Association
         $target = $this->getTarget();
         $source = $this->getSource();
         $junction = $this->junction();
-        $jointProperty = $this->_junctionProperty;
+        $jointProperty = $this->junctionProperty;
         $primary = (array)$target->getPrimaryKey();
 
         $result = [];
@@ -1473,13 +1473,13 @@ class BelongsToMany extends Association
      */
     protected function junctionAssociationName(): string
     {
-        if (!isset($this->_junctionAssociationName)) {
-            $this->_junctionAssociationName = $this->getTarget()
+        if (!isset($this->junctionAssociationName)) {
+            $this->junctionAssociationName = $this->getTarget()
                 ->getAssociation($this->junction()->getAlias())
                 ->getName();
         }
 
-        return $this->_junctionAssociationName;
+        return $this->junctionAssociationName;
     }
 
     /**
@@ -1493,19 +1493,19 @@ class BelongsToMany extends Association
     protected function junctionTableName(?string $name = null): string
     {
         if ($name === null) {
-            if (empty($this->_junctionTableName)) {
+            if (empty($this->junctionTableName)) {
                 $tablesNames = array_map('Cake\Utility\Inflector::underscore', [
                     $this->getSource()->getTable(),
                     $this->getTarget()->getTable(),
                 ]);
                 sort($tablesNames);
-                $this->_junctionTableName = implode('_', $tablesNames);
+                $this->junctionTableName = implode('_', $tablesNames);
             }
 
-            return $this->_junctionTableName;
+            return $this->junctionTableName;
         }
 
-        return $this->_junctionTableName = $name;
+        return $this->junctionTableName = $name;
     }
 
     /**
@@ -1534,7 +1534,7 @@ class BelongsToMany extends Association
         if (isset($options['junctionProperty'])) {
             assert(is_string($options['junctionProperty']), '`junctionProperty` must be a string');
 
-            $this->_junctionProperty = $options['junctionProperty'];
+            $this->junctionProperty = $options['junctionProperty'];
         }
     }
 }

@@ -45,7 +45,7 @@ class AssociationCollection implements IteratorAggregate
      *
      * @var array<string, \Cake\ORM\Association>
      */
-    protected array $_items = [];
+    protected array $items = [];
 
     /**
      * Constructor.
@@ -58,7 +58,7 @@ class AssociationCollection implements IteratorAggregate
     public function __construct(?LocatorInterface $tableLocator = null)
     {
         if ($tableLocator !== null) {
-            $this->_tableLocator = $tableLocator;
+            $this->tableLocator = $tableLocator;
         }
     }
 
@@ -80,11 +80,11 @@ class AssociationCollection implements IteratorAggregate
     {
         [, $alias] = pluginSplit($alias);
 
-        if (isset($this->_items[$alias])) {
+        if (isset($this->items[$alias])) {
             throw new CakeException(sprintf('Association alias `%s` is already set.', $alias));
         }
 
-        return $this->_items[$alias] = $association;
+        return $this->items[$alias] = $association;
     }
 
     /**
@@ -115,7 +115,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function get(string $alias): ?Association
     {
-        return $this->_items[$alias] ?? null;
+        return $this->items[$alias] ?? null;
     }
 
     /**
@@ -126,7 +126,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function getByProperty(string $prop): ?Association
     {
-        foreach ($this->_items as $assoc) {
+        foreach ($this->items as $assoc) {
             if ($assoc->getProperty() === $prop) {
                 return $assoc;
             }
@@ -143,7 +143,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function has(string $alias): bool
     {
-        return isset($this->_items[$alias]);
+        return isset($this->items[$alias]);
     }
 
     /**
@@ -153,7 +153,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function keys(): array
     {
-        return array_keys($this->_items);
+        return array_keys($this->items);
     }
 
     /**
@@ -168,7 +168,7 @@ class AssociationCollection implements IteratorAggregate
     {
         $class = array_map('strtolower', (array)$class);
 
-        $out = array_filter($this->_items, function (Association $assoc) use ($class) {
+        $out = array_filter($this->items, function (Association $assoc) use ($class) {
             [, $name] = namespaceSplit($assoc::class);
 
             return in_array(strtolower($name), $class, true);
@@ -187,7 +187,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function remove(string $alias): void
     {
-        unset($this->_items[$alias]);
+        unset($this->items[$alias]);
     }
 
     /**
@@ -199,7 +199,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function removeAll(): void
     {
-        foreach ($this->_items as $alias => $object) {
+        foreach ($this->items as $alias => $object) {
             $this->remove($alias);
         }
     }
@@ -329,7 +329,7 @@ class AssociationCollection implements IteratorAggregate
     public function cascadeDelete(EntityInterface $entity, array $options): bool
     {
         $noCascade = [];
-        foreach ($this->_items as $assoc) {
+        foreach ($this->items as $assoc) {
             if (!$assoc->getCascadeCallbacks()) {
                 $noCascade[] = $assoc;
                 continue;
@@ -378,6 +378,6 @@ class AssociationCollection implements IteratorAggregate
      */
     public function getIterator(): Traversable
     {
-        return new ArrayIterator($this->_items);
+        return new ArrayIterator($this->items);
     }
 }

@@ -121,7 +121,7 @@ class Behavior implements EventListenerInterface
      *
      * @var \Cake\ORM\Table
      */
-    protected Table $_table;
+    protected Table $table;
 
     /**
      * Reflection method cache for behaviors.
@@ -131,7 +131,7 @@ class Behavior implements EventListenerInterface
      *
      * @var array<string, array>
      */
-    protected static array $_reflectionCache = [];
+    protected static array $reflectionCache = [];
 
     /**
      * Default configuration
@@ -157,7 +157,7 @@ class Behavior implements EventListenerInterface
             $this->defaultConfig,
             $config,
         );
-        $this->_table = $table;
+        $this->table = $table;
         $this->setConfig($config);
         $this->initialize($config);
     }
@@ -182,7 +182,7 @@ class Behavior implements EventListenerInterface
      */
     public function table(): Table
     {
-        return $this->_table;
+        return $this->table;
     }
 
     /**
@@ -338,8 +338,8 @@ class Behavior implements EventListenerInterface
     protected function reflectionCache(): array
     {
         $class = static::class;
-        if (isset(self::$_reflectionCache[$class])) {
-            return self::$_reflectionCache[$class];
+        if (isset(self::$reflectionCache[$class])) {
+            return self::$reflectionCache[$class];
         }
 
         $events = $this->implementedEvents();
@@ -354,11 +354,11 @@ class Behavior implements EventListenerInterface
         }
 
         $baseClass = self::class;
-        if (isset(self::$_reflectionCache[$baseClass])) {
-            $baseMethods = self::$_reflectionCache[$baseClass];
+        if (isset(self::$reflectionCache[$baseClass])) {
+            $baseMethods = self::$reflectionCache[$baseClass];
         } else {
             $baseMethods = get_class_methods($baseClass);
-            self::$_reflectionCache[$baseClass] = $baseMethods;
+            self::$reflectionCache[$baseClass] = $baseMethods;
         }
 
         $return = [];
@@ -379,6 +379,6 @@ class Behavior implements EventListenerInterface
             }
         }
 
-        return self::$_reflectionCache[$class] = $return;
+        return self::$reflectionCache[$class] = $return;
     }
 }

@@ -29,7 +29,7 @@ class PersistenceFailedException extends CakeException
      *
      * @var \Cake\Datasource\EntityInterface
      */
-    protected EntityInterface $_entity;
+    protected EntityInterface $entity;
 
     /**
      * @inheritDoc
@@ -41,7 +41,7 @@ class PersistenceFailedException extends CakeException
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity on which the persistence operation failed
      * @param array<string>|string $message Either the string of the error message, or an array of attributes
-     *   that are made available in the view, and sprintf()'d into Exception::$_messageTemplate
+     *   that are made available in the view, and sprintf()'d into Exception::$messageTemplate
      * @param int|null $code The code of the error, is also the HTTP status code for the error.
      * @param \Throwable|null $previous the previous exception.
      */
@@ -51,7 +51,7 @@ class PersistenceFailedException extends CakeException
         ?int $code = null,
         ?Throwable $previous = null,
     ) {
-        $this->_entity = $entity;
+        $this->entity = $entity;
         if (is_array($message)) {
             $errors = [];
             foreach (Hash::flatten($entity->getErrors()) as $field => $error) {
@@ -72,6 +72,6 @@ class PersistenceFailedException extends CakeException
      */
     public function getEntity(): EntityInterface
     {
-        return $this->_entity;
+        return $this->entity;
     }
 }

@@ -29,7 +29,7 @@ trait CommonQueryTrait
      *
      * @var \Cake\ORM\Table
      */
-    protected Table $_repository;
+    protected Table $repository;
 
     /**
      * Hints this object to associate the correct types when casting conditions
@@ -69,7 +69,7 @@ trait CommonQueryTrait
             '`$repository` must be an instance of `' . Table::class . '`.',
         );
 
-        $this->_repository = $repository;
+        $this->repository = $repository;
 
         return $this;
     }
@@ -82,6 +82,6 @@ trait CommonQueryTrait
      */
     public function getRepository(): Table
     {
-        return $this->_repository;
+        return $this->repository;
     }
 }

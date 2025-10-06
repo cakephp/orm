@@ -45,7 +45,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      *
      * @var array<string, array|null>
      */
-    protected array $_config = [];
+    protected array $config = [];
 
     /**
      * Instances that belong to the registry.
@@ -60,7 +60,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      *
      * @var array<\Cake\ORM\Table>
      */
-    protected array $_fallbacked = [];
+    protected array $fallbacked = [];
 
     /**
      * Fallback class to use
@@ -140,7 +140,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     public function setConfig(array|string $alias, ?array $options = null): static
     {
         if (!is_string($alias)) {
-            $this->_config = $alias;
+            $this->config = $alias;
 
             return $this;
         }
@@ -152,7 +152,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
             ));
         }
 
-        $this->_config[$alias] = $options;
+        $this->config[$alias] = $options;
 
         return $this;
     }
@@ -163,10 +163,10 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     public function getConfig(?string $alias = null): array
     {
         if ($alias === null) {
-            return $this->_config;
+            return $this->config;
         }
 
-        return $this->_config[$alias] ?? [];
+        return $this->config[$alias] ?? [];
     }
 
     /**
@@ -223,8 +223,8 @@ class TableLocator extends AbstractLocator implements LocatorInterface
             $options['className'] = $alias;
         }
 
-        if (isset($this->_config[$alias])) {
-            $options += $this->_config[$alias];
+        if (isset($this->config[$alias])) {
+            $options += $this->config[$alias];
         }
 
         $allowFallbackClass = $options['allowFallbackClass'] ?? $this->allowFallbackClass;
@@ -271,7 +271,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
         $instance = $this->create($options);
 
         if ($options['className'] === $this->fallbackClassName) {
-            $this->_fallbacked[$alias] = $instance;
+            $this->fallbacked[$alias] = $instance;
         }
 
         return $instance;
@@ -337,8 +337,8 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     {
         parent::clear();
 
-        $this->_fallbacked = [];
-        $this->_config = [];
+        $this->fallbacked = [];
+        $this->config = [];
     }
 
     /**
@@ -351,7 +351,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      */
     public function genericInstances(): array
     {
-        return $this->_fallbacked;
+        return $this->fallbacked;
     }
 
     /**
@@ -361,7 +361,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     {
         parent::remove($alias);
 
-        unset($this->_fallbacked[$alias]);
+        unset($this->fallbacked[$alias]);
     }
 
     /**

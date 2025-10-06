@@ -74,7 +74,7 @@ class EavStrategy implements TranslateStrategyInterface
     public function __construct(Table $table, array $config = [])
     {
         if (isset($config['tableLocator'])) {
-            $this->_tableLocator = $config['tableLocator'];
+            $this->tableLocator = $config['tableLocator'];
         }
 
         $this->setConfig($config);
@@ -246,7 +246,7 @@ class EavStrategy implements TranslateStrategyInterface
 
         // Check early if empty translations are present in the entity.
         // If this is the case, unset them to prevent persistence.
-        // This only applies if $this->_config['allowEmptyTranslations'] is false
+        // This only applies if $this->config['allowEmptyTranslations'] is false
         if ($this->config['allowEmptyTranslations'] === false) {
             $this->unsetEmptyFields($entity);
         }

@@ -46,14 +46,14 @@ class LinkConstraint
      *
      * @var \Cake\ORM\Association|string
      */
-    protected Association|string $_association;
+    protected Association|string $association;
 
     /**
      * The link status that is required to be present in order for the check to succeed.
      *
      * @var string
      */
-    protected string $_requiredLinkState;
+    protected string $requiredLinkState;
 
     /**
      * Constructor.
@@ -70,8 +70,8 @@ class LinkConstraint
             );
         }
 
-        $this->_association = $association;
-        $this->_requiredLinkState = $requiredLinkStatus;
+        $this->association = $association;
+        $this->requiredLinkState = $requiredLinkStatus;
     }
 
     /**
@@ -92,7 +92,7 @@ class LinkConstraint
             );
         }
 
-        $association = $this->_association;
+        $association = $this->association;
         if (!$association instanceof Association) {
             $association = $table->getAssociation($association);
         }
@@ -101,11 +101,11 @@ class LinkConstraint
 
         if (
             (
-                $this->_requiredLinkState === static::STATUS_LINKED &&
+                $this->requiredLinkState === static::STATUS_LINKED &&
                 $count < 1
             ) ||
             (
-                $this->_requiredLinkState === static::STATUS_NOT_LINKED &&
+                $this->requiredLinkState === static::STATUS_NOT_LINKED &&
                 $count !== 0
             )
         ) {

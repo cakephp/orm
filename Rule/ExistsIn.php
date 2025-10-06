@@ -32,21 +32,21 @@ class ExistsIn
      *
      * @var array<string>
      */
-    protected array $_fields;
+    protected array $fields;
 
     /**
      * The repository where the field will be looked for
      *
      * @var \Cake\ORM\Table|\Cake\ORM\Association|string
      */
-    protected Table|Association|string $_repository;
+    protected Table|Association|string $repository;
 
     /**
      * Options for the constructor
      *
      * @var array<string, mixed>
      */
-    protected array $_options = [];
+    protected array $options = [];
 
     /**
      * Constructor.
@@ -64,10 +64,10 @@ class ExistsIn
     public function __construct(array|string $fields, Table|Association|string $repository, array $options = [])
     {
         $options += ['allowNullableNulls' => false];
-        $this->_options = $options;
+        $this->options = $options;
 
-        $this->_fields = (array)$fields;
-        $this->_repository = $repository;
+        $this->fields = (array)$fields;
+        $this->repository = $repository;
     }
 
     /**
@@ -81,25 +81,25 @@ class ExistsIn
      */
     public function __invoke(EntityInterface $entity, array $options): bool
     {
-        if (is_string($this->_repository)) {
+        if (is_string($this->repository)) {
             /** @var \Cake\ORM\Table $table */
             $table = $options['repository'];
 
-            if (!$table->hasAssociation($this->_repository)) {
+            if (!$table->hasAssociation($this->repository)) {
                 throw new DatabaseException(sprintf(
                     'ExistsIn rule for `%s` is invalid. `%s` is not associated with `%s`.',
-                    implode(', ', $this->_fields),
-                    $this->_repository,
+                    implode(', ', $this->fields),
+                    $this->repository,
                     $options['repository']::class,
                 ));
             }
-            $repository = $table->getAssociation($this->_repository);
-            $this->_repository = $repository;
+            $repository = $table->getAssociation($this->repository);
+            $this->repository = $repository;
         }
 
-        $fields = $this->_fields;
-        $source = $this->_repository;
-        $target = $this->_repository;
+        $fields = $this->fields;
+        $source = $this->repository;
+        $target = $this->repository;
         if ($target instanceof Association) {
             $bindingKey = (array)$target->getBindingKey();
             $realTarget = $target->getTarget();
@@ -119,7 +119,7 @@ class ExistsIn
             $source = $source->getSource();
         }
 
-        if (!$entity->extract($this->_fields, true)) {
+        if (!$entity->extract($this->fields, true)) {
             return true;
         }
 
@@ -127,7 +127,7 @@ class ExistsIn
             return true;
         }
 
-        if ($this->_options['allowNullableNulls']) {
+        if ($this->options['allowNullableNulls']) {
             /** @var \Cake\ORM\Table $source */
             $schema = $source->getSchema();
             foreach ($fields as $i => $field) {
@@ -160,12 +160,12 @@ class ExistsIn
     {
         $nulls = 0;
         $schema = $source->getSchema();
-        foreach ($this->_fields as $field) {
+        foreach ($this->fields as $field) {
             if ($schema->hasColumn($field) && $schema->isNullable($field) && $entity->get($field) === null) {
                 $nulls++;
             }
         }
 
-        return $nulls === count($this->_fields);
+        return $nulls === count($this->fields);
     }
 }

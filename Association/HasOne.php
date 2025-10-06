@@ -40,7 +40,7 @@ class HasOne extends Association
      *
      * @var array<string>
      */
-    protected array $_validStrategies = [
+    protected array $validStrategies = [
         self::STRATEGY_JOIN,
         self::STRATEGY_SELECT,
     ];
@@ -50,7 +50,7 @@ class HasOne extends Association
      */
     public function getForeignKey(): array|string|false
     {
-        return $this->_foreignKey ??= $this->modelKey($this->getSource()->getAlias());
+        return $this->foreignKey ??= $this->modelKey($this->getSource()->getAlias());
     }
 
     /**
@@ -62,7 +62,7 @@ class HasOne extends Association
      */
     public function setForeignKey(array|string|false $key): static
     {
-        $this->_foreignKey = $key;
+        $this->foreignKey = $key;
 
         return $this;
     }
@@ -74,7 +74,7 @@ class HasOne extends Association
      */
     protected function propertyName(): string
     {
-        [, $name] = pluginSplit($this->_name);
+        [, $name] = pluginSplit($this->name);
 
         return Inflector::underscore(Inflector::singularize($name));
     }

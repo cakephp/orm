@@ -29,14 +29,14 @@ class IsUnique
      *
      * @var array<string>
      */
-    protected array $_fields;
+    protected array $fields;
 
     /**
      * The unique check options
      *
      * @var array<string, mixed>
      */
-    protected array $_options = [
+    protected array $options = [
         'allowMultipleNulls' => true,
     ];
 
@@ -52,8 +52,8 @@ class IsUnique
      */
     public function __construct(array $fields, array $options = [])
     {
-        $this->_fields = $fields;
-        $this->_options = $options + $this->_options;
+        $this->fields = $fields;
+        $this->options = $options + $this->options;
     }
 
     /**
@@ -66,12 +66,12 @@ class IsUnique
      */
     public function __invoke(EntityInterface $entity, array $options): bool
     {
-        if (!$entity->extract($this->_fields, true)) {
+        if (!$entity->extract($this->fields, true)) {
             return true;
         }
 
-        $fields = $entity->extract($this->_fields);
-        if ($this->_options['allowMultipleNulls'] && array_filter($fields, 'is_null')) {
+        $fields = $entity->extract($this->fields);
+        if ($this->options['allowMultipleNulls'] && array_filter($fields, 'is_null')) {
             return true;
         }
 
