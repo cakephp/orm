@@ -140,7 +140,7 @@ class Behavior implements EventListenerInterface
      *
      * @var array<string, mixed>
      */
-    protected array $_defaultConfig = [];
+    protected array $defaultConfig = [];
 
     /**
      * Constructor
@@ -154,7 +154,7 @@ class Behavior implements EventListenerInterface
     {
         $config = $this->resolveMethodAliases(
             'implementedFinders',
-            $this->_defaultConfig,
+            $this->defaultConfig,
             $config,
         );
         $this->_table = $table;
@@ -228,11 +228,11 @@ class Behavior implements EventListenerInterface
     {
         $keys = ['implementedFinders'];
         foreach ($keys as $key) {
-            if (!isset($this->_config[$key])) {
+            if (!isset($this->config[$key])) {
                 continue;
             }
 
-            foreach ($this->_config[$key] as $method) {
+            foreach ($this->config[$key] as $method) {
                 if (!is_callable([$this, $method])) {
                     throw new CakeException(sprintf(
                         'The method `%s` is not callable on class `%s`.',

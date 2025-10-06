@@ -53,7 +53,7 @@ class EavStrategy implements TranslateStrategyInterface
      *
      * @var array<string, mixed>
      */
-    protected array $_defaultConfig = [
+    protected array $defaultConfig = [
         'fields' => [],
         'translationTable' => 'I18n',
         'defaultLocale' => null,
@@ -80,7 +80,7 @@ class EavStrategy implements TranslateStrategyInterface
         $this->setConfig($config);
         $this->table = $table;
         $this->translationTable = $this->getTableLocator()->get(
-            $this->_config['translationTable'],
+            $this->config['translationTable'],
             ['allowFallbackClass' => true],
         );
 
@@ -98,11 +98,11 @@ class EavStrategy implements TranslateStrategyInterface
      */
     protected function setupAssociations(): void
     {
-        $fields = $this->_config['fields'];
-        $table = $this->_config['translationTable'];
-        $model = $this->_config['referenceName'];
-        $strategy = $this->_config['strategy'];
-        $filter = $this->_config['onlyTranslated'];
+        $fields = $this->config['fields'];
+        $table = $this->config['translationTable'];
+        $model = $this->config['referenceName'];
+        $strategy = $this->config['strategy'];
+        $filter = $this->config['onlyTranslated'];
 
         $targetAlias = $this->translationTable->getAlias();
         $alias = $this->table->getAlias();
@@ -126,7 +126,7 @@ class EavStrategy implements TranslateStrategyInterface
                 $name . '.model' => $model,
                 $name . '.field' => $field,
             ];
-            if (!$this->_config['allowEmptyTranslations']) {
+            if (!$this->config['allowEmptyTranslations']) {
                 $conditions[$name . '.content !='] = '';
             }
 
@@ -144,7 +144,7 @@ class EavStrategy implements TranslateStrategyInterface
         }
 
         $conditions = ["{$targetAlias}.model" => $model];
-        if (!$this->_config['allowEmptyTranslations']) {
+        if (!$this->config['allowEmptyTranslations']) {
             $conditions["{$targetAlias}.content !="] = '';
         }
 
@@ -197,12 +197,12 @@ class EavStrategy implements TranslateStrategyInterface
         };
 
         $contain = [];
-        $fields = $this->_config['fields'];
+        $fields = $this->config['fields'];
         $alias = $this->table->getAlias();
         $select = $query->clause('select');
 
         $changeFilter = isset($options['filterByCurrentLocale']) &&
-            $options['filterByCurrentLocale'] !== $this->_config['onlyTranslated'];
+            $options['filterByCurrentLocale'] !== $this->config['onlyTranslated'];
 
         foreach ($fields as $field) {
             $name = $alias . '_' . $field . '_translation';
@@ -247,7 +247,7 @@ class EavStrategy implements TranslateStrategyInterface
         // Check early if empty translations are present in the entity.
         // If this is the case, unset them to prevent persistence.
         // This only applies if $this->_config['allowEmptyTranslations'] is false
-        if ($this->_config['allowEmptyTranslations'] === false) {
+        if ($this->config['allowEmptyTranslations'] === false) {
             $this->unsetEmptyFields($entity);
         }
 
@@ -261,7 +261,7 @@ class EavStrategy implements TranslateStrategyInterface
             return;
         }
 
-        $values = $entity->extract($this->_config['fields'], true);
+        $values = $entity->extract($this->config['fields'], true);
         $fields = array_keys($values);
         $noFields = $fields === [];
 
@@ -280,7 +280,7 @@ class EavStrategy implements TranslateStrategyInterface
         // need to mark the entity dirty so the root
         // entity persists.
         if ($noFields && $bundled && !$key) {
-            foreach ($this->_config['fields'] as $field) {
+            foreach ($this->config['fields'] as $field) {
                 $entity->setDirty($field, true);
             }
 
@@ -291,7 +291,7 @@ class EavStrategy implements TranslateStrategyInterface
             return;
         }
 
-        $model = $this->_config['referenceName'];
+        $model = $this->config['referenceName'];
 
         $preexistent = [];
         if ($key) {
@@ -374,7 +374,7 @@ class EavStrategy implements TranslateStrategyInterface
             }
             $hydrated = $row instanceof EntityInterface;
 
-            foreach ($this->_config['fields'] as $field) {
+            foreach ($this->config['fields'] as $field) {
                 $name = $field . '_translation';
                 $translation = $row[$name] ?? null;
 
@@ -471,7 +471,7 @@ class EavStrategy implements TranslateStrategyInterface
             return;
         }
 
-        $fields = $this->_config['fields'];
+        $fields = $this->config['fields'];
         if ($entity->isNew()) {
             $key = null;
         } else {
@@ -505,7 +505,7 @@ class EavStrategy implements TranslateStrategyInterface
                 $contents[$i]->set('id', $results[$i], ['setter' => false]);
                 $contents[$i]->setNew(false);
             } else {
-                $translation['model'] = $this->_config['referenceName'];
+                $translation['model'] = $this->config['referenceName'];
                 unset($translation['foreign_key IS']);
                 $contents[$i]->patch($translation, ['setter' => false, 'guard' => false]);
                 $contents[$i]->setNew(true);

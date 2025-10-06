@@ -49,7 +49,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      *
      * @var array<string, mixed>
      */
-    protected array $_defaultConfig = [
+    protected array $defaultConfig = [
         'fields' => [],
         'defaultLocale' => null,
         'referenceName' => null,
@@ -85,7 +85,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $this->setConfig($config);
         $this->table = $table;
         $this->translationTable = $this->getTableLocator()->get(
-            $this->_config['translationTable'],
+            $this->config['translationTable'],
             ['allowFallbackClass' => true],
         );
 
@@ -363,7 +363,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         // Check early if empty translations are present in the entity.
         // If this is the case, unset them to prevent persistence.
         // This only applies if $this->_config['allowEmptyTranslations'] is false
-        if ($this->_config['allowEmptyTranslations'] === false) {
+        if ($this->config['allowEmptyTranslations'] === false) {
             $this->unsetEmptyFields($entity);
         }
 
@@ -484,7 +484,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      */
     protected function rowMapper(CollectionInterface $results, string $locale): CollectionInterface
     {
-        $allowEmpty = $this->_config['allowEmptyTranslations'];
+        $allowEmpty = $this->config['allowEmptyTranslations'];
 
         return $results->map(function ($row) use ($allowEmpty, $locale) {
             if ($row === null) {

@@ -58,7 +58,7 @@ class TreeBehavior extends Behavior
      *
      * @var array<string, mixed>
      */
-    protected array $_defaultConfig = [
+    protected array $defaultConfig = [
         'implementedFinders' => [
             'path' => 'findPath',
             'children' => 'findChildren',
@@ -78,8 +78,8 @@ class TreeBehavior extends Behavior
      */
     public function initialize(array $config): void
     {
-        $this->_config['leftField'] = new IdentifierExpression($this->_config['left']);
-        $this->_config['rightField'] = new IdentifierExpression($this->_config['right']);
+        $this->config['leftField'] = new IdentifierExpression($this->config['left']);
+        $this->config['rightField'] = new IdentifierExpression($this->config['right']);
     }
 
     /**
@@ -162,7 +162,7 @@ class TreeBehavior extends Behavior
      */
     public function afterSave(EventInterface $event, EntityInterface $entity): void
     {
-        if (!$this->_config['level'] || $entity->isNew()) {
+        if (!$this->config['level'] || $entity->isNew()) {
             return;
         }
 
@@ -849,8 +849,8 @@ class TreeBehavior extends Behavior
      */
     protected function getMax(): int
     {
-        $field = $this->_config['right'];
-        $rightField = $this->_config['rightField'];
+        $field = $this->config['right'];
+        $rightField = $this->config['rightField'];
         $edge = $this->scope($this->_table->find())
             ->select([$field])
             ->orderByDesc($rightField)
@@ -877,7 +877,7 @@ class TreeBehavior extends Behavior
      */
     protected function sync(int $shift, string $dir, string $conditions, bool $mark = false): void
     {
-        $config = $this->_config;
+        $config = $this->config;
 
         /** @var \Cake\Database\Expression\IdentifierExpression $field */
         foreach ([$config['leftField'], $config['rightField']] as $field) {
