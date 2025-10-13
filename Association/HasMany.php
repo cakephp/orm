@@ -176,7 +176,7 @@ class HasMany extends Association
             $entity->extract((array)$this->getBindingKey()),
         );
 
-        $options['_sourceTable'] = $this->getSource();
+        $options['sourceTable'] = $this->getSource();
 
         if (
             $this->saveStrategy === self::SAVE_REPLACE &&
