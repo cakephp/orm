@@ -70,7 +70,7 @@ class Entity implements EntityInterface, InvalidPropertyInterface
             $this->setOriginalField(array_keys($properties));
 
             if ($options['markClean'] && !$options['useSetters']) {
-                $this->_fields = $properties;
+                $this->fields = $properties;
 
                 return;
             }
