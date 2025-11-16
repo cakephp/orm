@@ -1111,12 +1111,10 @@ abstract class Association
         $foreignKey = (array)$options['foreignKey'];
         $bindingKey = (array)$this->getBindingKey();
 
+        $targetOwns = $this->isOwningSide($this->getTarget());
         if (count($foreignKey) !== count($bindingKey)) {
             if (!$bindingKey) {
-                $table = $this->getTarget()->getTable();
-                if ($this->isOwningSide($this->getSource())) {
-                    $table = $this->getSource()->getTable();
-                }
+                $table = $targetOwns ? $this->getTarget()->getTable() : $this->getSource()->getTable();
                 $msg = 'The `%s` table does not define a primary key, and cannot have join conditions generated.';
                 throw new DatabaseException(sprintf($msg, $table));
             }
@@ -1131,8 +1129,12 @@ abstract class Association
         }
 
         foreach ($foreignKey as $k => $f) {
-            $field = sprintf('%s.%s', $sAlias, $bindingKey[$k]);
-            $value = new IdentifierExpression(sprintf('%s.%s', $tAlias, $f));
+            // Set foreign and binding aliases based on which side has the foreign key
+            $fAlias = $targetOwns ? $sAlias : $tAlias;
+            $bAlias = $targetOwns ? $tAlias : $sAlias;
+
+            $field = sprintf('%s.%s', $bAlias, $bindingKey[$k]);
+            $value = new IdentifierExpression(sprintf('%s.%s', $fAlias, $f));
             $conditions[$field] = $value;
         }
 
