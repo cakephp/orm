@@ -129,7 +129,7 @@ class Marshaller
                     );
                 };
             } else {
-                $callback = function ($value, $entity) use ($assoc, $nested): array|EntityInterface|null {
+                $callback = function ($value) use ($assoc, $nested): array|EntityInterface|null {
                     $options = $nested + ['associated' => []];
 
                     return $this->_marshalAssociation($assoc, $value, $options);
