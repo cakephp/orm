@@ -87,7 +87,7 @@ class SelectWithPivotLoader extends SelectLoader
         $queryBuilder = false;
 
         if (!empty($options['queryBuilder'])) {
-            /** @var \Closure $queryBuilder */
+            assert(is_callable($options['queryBuilder']));
             $queryBuilder = $options['queryBuilder'];
             unset($options['queryBuilder']);
         }
