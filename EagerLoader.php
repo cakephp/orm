@@ -611,9 +611,9 @@ class EagerLoader
     /**
      * Merges association joins and throws an exception if there are conflicts.
      *
-     * @param array $a
-     * @param array $b
-     * @return array
+     * @param array<string, \Cake\ORM\EagerLoadable> $a
+     * @param array<string, \Cake\ORM\EagerLoadable> $b
+     * @return array<string, \Cake\ORM\EagerLoadable>
      */
     private function mergeJoins(array $a, array $b): array
     {
