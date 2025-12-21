@@ -375,9 +375,9 @@ class EagerLoader
             $pointer += [$table => []];
 
             if (isset($options['queryBuilder'], $pointer[$table]['queryBuilder'])) {
-                /** @var callable $first */
+                assert(is_callable($pointer[$table]['queryBuilder']));
                 $first = $pointer[$table]['queryBuilder'];
-                /** @var callable $second */
+                assert(is_callable($options['queryBuilder']));
                 $second = $options['queryBuilder'];
                 $options['queryBuilder'] = fn($query) => $second($first($query));
             }
