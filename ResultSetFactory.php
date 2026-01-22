@@ -294,13 +294,15 @@ class ResultSetFactory
         if (!isset(static::$dtoHydrators[$dtoClass])) {
             // Check for array style static factory method (cakephp-dto style)
             if (method_exists($dtoClass, 'createFromArray')) {
-                static::$dtoHydrators[$dtoClass] = static fn(array $row): object =>
-                    $dtoClass::createFromArray($row, true);
+                static::$dtoHydrators[$dtoClass] = static function (array $row) use ($dtoClass): object {
+                    return $dtoClass::createFromArray($row, true);
+                };
             } else {
                 // Use DtoMapper for plain readonly DTOs with named constructor params
                 $mapper = $this->getDtoMapper();
-                static::$dtoHydrators[$dtoClass] = static fn(array $row): object =>
-                    $mapper->map($row, $dtoClass);
+                static::$dtoHydrators[$dtoClass] = static function (array $row) use ($mapper, $dtoClass): object {
+                    return $mapper->map($row, $dtoClass);
+                };
             }
         }
 
