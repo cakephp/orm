@@ -619,8 +619,7 @@ class BelongsToMany extends Association
         $table = $this->junction();
         $hasMany = $this->getSource()->getAssociation($table->getAlias());
         if ($this->_cascadeCallbacks) {
-            foreach ($hasMany->find('all')->where($conditions)->all()->toList() as $related) {
-                /** @phpstan-ignore argument.type (cascade callbacks always have hydration enabled) */
+            foreach ($hasMany->find('all')->where($conditions)->toArray() as $related) {
                 $success = $table->delete($related, $options);
                 if (!$success) {
                     return false;
