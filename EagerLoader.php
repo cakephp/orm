@@ -382,7 +382,7 @@ class EagerLoader
                 $options['queryBuilder'] = fn($query) => $second($first($query));
             }
 
-            if (!is_array($options)) {
+            if (is_string($options)) {
                 $options = [$options => []];
             }
 
