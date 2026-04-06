@@ -2551,7 +2551,23 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return null;
         }, $options['atomic']);
 
-        // afterDeleteCommit is dispatched by individual _processDelete() calls via onCommit()
+        if ($failed === null && $this->_transactionCommitted($options['atomic'], $options['_primary'])) {
+            foreach ($entities as $entity) {
+                $this->dispatchEvent('Model.afterDeleteCommit', [
+                    'entity' => $entity,
+                    'options' => $options,
+                ]);
+            }
+        } elseif ($failed === null && $this->getConnection()->inTransaction()) {
+            foreach ($entities as $entity) {
+                $this->getConnection()->onCommit(
+                    fn() => $this->dispatchEvent('Model.afterDeleteCommit', [
+                        'entity' => $entity,
+                        'options' => $options,
+                    ]),
+                );
+            }
+        }
 
         return $failed;
     }
