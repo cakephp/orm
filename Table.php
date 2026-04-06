@@ -1658,6 +1658,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         if ($entity && $this->_transactionCommitted($options['atomic'], true)) {
             $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
+        } elseif ($entity && $this->getConnection()->inTransaction()) {
+            $this->getConnection()->onCommit(
+                fn () => $this->dispatchEvent('Model.afterSaveCommit', ['entity' => $entity, 'options' => $options])
+            );
         }
 
         return $entity;
@@ -1978,6 +1982,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($success) {
             if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
                 $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
+            } elseif ($this->getConnection()->inTransaction()) {
+                $this->getConnection()->onCommit(
+                    fn () => $this->dispatchEvent('Model.afterSaveCommit', ['entity' => $entity, 'options' => $options])
+                );
             }
             if ($options['atomic'] || $options['_primary']) {
                 if ($options['_cleanOnSuccess']) {
@@ -2459,6 +2467,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 'entity' => $entity,
                 'options' => $options,
             ]);
+        } elseif ($success && $this->getConnection()->inTransaction()) {
+            $this->getConnection()->onCommit(
+                fn () => $this->dispatchEvent('Model.afterDeleteCommit', [
+                    'entity' => $entity,
+                    'options' => $options,
+                ])
+            );
         }
 
         return $success;
