@@ -1983,9 +1983,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         );
 
         if ($success) {
+            $deferToCommit = $options['_primary']
+                && $this->getConnection()->inTransaction();
+
             if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
                 $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
-            } elseif ($this->getConnection()->inTransaction()) {
+            } elseif ($deferToCommit) {
                 $this->getConnection()->afterCommit(
                     fn() => $this->dispatchEvent('Model.afterSaveCommit', [
                         'entity' => $entity,
@@ -1994,11 +1997,21 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 );
             }
             if ($options['atomic'] || $options['_primary']) {
-                if ($options['_cleanOnSuccess']) {
-                    $entity->clean();
-                    $entity->setNew(false);
+                if ($deferToCommit) {
+                    $this->getConnection()->afterCommit(function () use ($entity, $options): void {
+                        if ($options['_cleanOnSuccess']) {
+                            $entity->clean();
+                            $entity->setNew(false);
+                        }
+                        $entity->setSource($this->getRegistryAlias());
+                    });
+                } else {
+                    if ($options['_cleanOnSuccess']) {
+                        $entity->clean();
+                        $entity->setNew(false);
+                    }
+                    $entity->setSource($this->getRegistryAlias());
                 }
-                $entity->setSource($this->getRegistryAlias());
             }
         }
 
@@ -2473,7 +2486,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 'entity' => $entity,
                 'options' => $options,
             ]);
-        } elseif ($success && $this->getConnection()->inTransaction()) {
+        } elseif ($success && $options['_primary'] && $this->getConnection()->inTransaction()) {
             $this->getConnection()->afterCommit(
                 fn() => $this->dispatchEvent('Model.afterDeleteCommit', [
                     'entity' => $entity,
@@ -2565,7 +2578,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                     'options' => $options,
                 ]);
             }
-        } elseif ($failed === null && $this->getConnection()->inTransaction()) {
+        } elseif ($failed === null && $options['_primary'] && $this->getConnection()->inTransaction()) {
             foreach ($entities as $entity) {
                 $this->getConnection()->afterCommit(
                     fn() => $this->dispatchEvent('Model.afterDeleteCommit', [
