@@ -2407,6 +2407,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         };
 
+        // afterSaveCommit is dispatched by individual save() calls via afterCommit()
         if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
             foreach ($entities as $entity) {
                 if ($options['atomic'] || $options['_primary']) {
