@@ -127,13 +127,19 @@ use function Cake\Core\namespaceSplit;
  * - `Model.afterSaveCommit` Fired after the transaction in which the save operation is
  *   wrapped has been committed. It’s also triggered for non atomic saves where database
  *   operations are implicitly committed. The event is triggered only for the primary
- *   table on which save() is directly called. The event is not triggered if a
- *   transaction is started before calling save.
+ *   table on which save() is directly called. When called inside an outer transaction,
+ *   the event is deferred until the outermost transaction commits.
  *
  * - `Model.beforeDelete` Fired before an entity is deleted. By stopping this
  *   event you will abort the delete operation.
  *
  * - `Model.afterDelete` Fired after an entity has been deleted.
+ *
+ * - `Model.afterDeleteCommit` Fired after the transaction in which the delete operation is
+ *   wrapped has been committed. It's also triggered for non atomic deletes where database
+ *   operations are implicitly committed. The event is triggered only for the primary
+ *   table on which delete() is directly called. When called inside an outer transaction,
+ *   the event is deferred until the outermost transaction commits.
  *
  * ### Callbacks
  *
