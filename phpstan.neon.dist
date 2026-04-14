@@ -21,3 +21,9 @@ parameters:
 			identifier: function.impossibleType
 			count: 1
 			path: EagerLoader.php
+
+		-
+			message: '#^Call to an undefined method Cake\\Database\\Connection::afterCommit\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: Table.php

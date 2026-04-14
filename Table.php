@@ -127,13 +127,19 @@ use function Cake\Core\namespaceSplit;
  * - `Model.afterSaveCommit` Fired after the transaction in which the save operation is
  *   wrapped has been committed. It’s also triggered for non atomic saves where database
  *   operations are implicitly committed. The event is triggered only for the primary
- *   table on which save() is directly called. The event is not triggered if a
- *   transaction is started before calling save.
+ *   table on which save() is directly called. When called inside an outer transaction,
+ *   the event is deferred until the outermost transaction commits.
  *
  * - `Model.beforeDelete` Fired before an entity is deleted. By stopping this
  *   event you will abort the delete operation.
  *
  * - `Model.afterDelete` Fired after an entity has been deleted.
+ *
+ * - `Model.afterDeleteCommit` Fired after the transaction in which the delete operation is
+ *   wrapped has been committed. It's also triggered for non atomic deletes where database
+ *   operations are implicitly committed. The event is triggered only for the primary
+ *   table on which delete() is directly called. When called inside an outer transaction,
+ *   the event is deferred until the outermost transaction commits.
  *
  * ### Callbacks
  *
@@ -1658,6 +1664,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         if ($entity && $this->_transactionCommitted($options['atomic'], true)) {
             $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
+        } elseif ($entity && $this->getConnection()->inTransaction()) {
+            $this->getConnection()->afterCommit(
+                fn() => $this->dispatchEvent('Model.afterSaveCommit', [
+                    'entity' => $entity,
+                    'options' => $options,
+                ]),
+            );
         }
 
         return $entity;
@@ -1976,15 +1989,35 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         );
 
         if ($success) {
+            $deferToCommit = $options['_primary']
+                && $this->getConnection()->inTransaction();
+
             if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
                 $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
+            } elseif ($deferToCommit) {
+                $this->getConnection()->afterCommit(
+                    fn() => $this->dispatchEvent('Model.afterSaveCommit', [
+                        'entity' => $entity,
+                        'options' => $options,
+                    ]),
+                );
             }
             if ($options['atomic'] || $options['_primary']) {
-                if ($options['_cleanOnSuccess']) {
-                    $entity->clean();
-                    $entity->setNew(false);
+                if ($deferToCommit) {
+                    $this->getConnection()->afterCommit(function () use ($entity, $options): void {
+                        if ($options['_cleanOnSuccess']) {
+                            $entity->clean();
+                            $entity->setNew(false);
+                        }
+                        $entity->setSource($this->getRegistryAlias());
+                    });
+                } else {
+                    if ($options['_cleanOnSuccess']) {
+                        $entity->clean();
+                        $entity->setNew(false);
+                    }
+                    $entity->setSource($this->getRegistryAlias());
                 }
-                $entity->setSource($this->getRegistryAlias());
             }
         }
 
@@ -2399,9 +2432,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         };
 
+        // afterSaveCommit is dispatched by individual save() calls via afterCommit()
         if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
             foreach ($entities as $entity) {
-                $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
                 if ($options['atomic'] || $options['_primary']) {
                     $cleanupOnSuccess($entity);
                 }
@@ -2459,6 +2492,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 'entity' => $entity,
                 'options' => $options,
             ]);
+        } elseif ($success && $options['_primary'] && $this->getConnection()->inTransaction()) {
+            $this->getConnection()->afterCommit(
+                fn() => $this->dispatchEvent('Model.afterDeleteCommit', [
+                    'entity' => $entity,
+                    'options' => $options,
+                ]),
+            );
         }
 
         return $success;
@@ -2543,6 +2583,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                     'entity' => $entity,
                     'options' => $options,
                 ]);
+            }
+        } elseif ($failed === null && $options['_primary'] && $this->getConnection()->inTransaction()) {
+            foreach ($entities as $entity) {
+                $this->getConnection()->afterCommit(
+                    fn() => $this->dispatchEvent('Model.afterDeleteCommit', [
+                        'entity' => $entity,
+                        'options' => $options,
+                    ]),
+                );
             }
         }
 
