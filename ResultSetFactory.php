@@ -328,7 +328,7 @@ class ResultSetFactory
      */
     public function getDtoMapper(): DtoMapper
     {
-        return $this->dtoMapper ?? new DtoMapper();
+        return $this->dtoMapper ??= new DtoMapper();
     }
 
     /**
