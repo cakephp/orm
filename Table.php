@@ -47,6 +47,7 @@ use Cake\ORM\Query\DeleteQuery;
 use Cake\ORM\Query\InsertQuery;
 use Cake\ORM\Query\QueryFactory;
 use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\Query\UnhydratedSelectQuery;
 use Cake\ORM\Query\UpdateQuery;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
@@ -1365,6 +1366,50 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Type-safe non-hydrated read. Equivalent in behavior to
+     * `find($type, ...)->disableHydration()` but the type system knows the
+     * results are arrays rather than entities.
+     *
+     * Construction methods (where/join/order/contain/finders) behave the same
+     * as on a regular {@see SelectQuery}; only the result-fetch methods
+     * (first/firstOrFail/all/toArray/iteration) differ in shape.
+     *
+     * ```
+     * $rows = $articlesTable->unhydratedFind()->where(['published' => true])->all();
+     * // $rows: iterable<array<string, mixed>>
+     * ```
+     *
+     * Only finders that mutate and return the query they were given are
+     * supported here (the overwhelming majority). A finder that discards the
+     * passed query and returns a freshly built one (e.g. by delegating to
+     * `find()`) cannot preserve the non-hydrating contract and triggers an
+     * exception rather than a silent hydrated result.
+     *
+     * @param string $type The type of finder to call.
+     * @param mixed ...$args Arguments matching the finder's parameters.
+     * @return \Cake\ORM\Query\UnhydratedSelectQuery
+     * @throws \Cake\Core\Exception\CakeException When the finder does not return the passed query.
+     * @since 5.4.0
+     */
+    public function unhydratedFind(string $type = 'all', mixed ...$args): UnhydratedSelectQuery
+    {
+        $query = $this->unhydratedSelectQuery();
+        $result = $this->callFinder($type, $query, ...$args);
+
+        if (!$result instanceof UnhydratedSelectQuery) {
+            throw new CakeException(sprintf(
+                'The `%s` finder must return the query it was given when called via unhydratedFind(); '
+                . 'got `%s` instead. Finders that build a fresh query cannot preserve the '
+                . 'non-hydrating contract — use find() for those.',
+                $type,
+                get_debug_type($result),
+            ));
+        }
+
+        return $result;
+    }
+
+    /**
      * Returns the query as passed.
      *
      * By default findAll() applies no query clauses, you can override this
@@ -1838,6 +1883,17 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $query = $this->queryFactory->select($this);
 
         return $query;
+    }
+
+    /**
+     * Creates a new non-hydrating select query.
+     *
+     * @return \Cake\ORM\Query\UnhydratedSelectQuery
+     * @since 5.4.0
+     */
+    public function unhydratedSelectQuery(): UnhydratedSelectQuery
+    {
+        return $this->queryFactory->unhydratedSelect($this);
     }
 
     /**
